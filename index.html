@@ -20,11 +20,16 @@ button.b{background:var(--a);color:#fff;border:0;border-radius:6px;padding:6px 1
 .lw input{font:inherit;color:var(--t);background:var(--bg);border:1px solid var(--l);border-radius:6px;padding:9px}
 .lw button{width:100%;background:var(--a);color:#fff;border:0;border-radius:6px;padding:10px;font-size:14px;cursor:pointer;margin-top:4px}
 .err{color:var(--ko);font-size:12px;margin-top:6px}.topbar{display:flex;justify-content:flex-end;gap:8px;padding:6px 16px;background:var(--c);border-bottom:1px solid var(--l);font-size:12px;color:var(--m);align-items:center}
+#printarea{display:none}
+@media print{body *{visibility:hidden}#printarea,#printarea *{visibility:visible}#printarea{display:block;position:absolute;left:0;top:0;width:100%;padding:16px;color:#000;background:#fff}
+#printarea table{width:100%;border-collapse:collapse;margin:8px 0}#printarea td,#printarea th{border:1px solid #999;padding:4px 6px;font-size:11px;text-align:left}
+#printarea h1{margin:0 0 2px;font-size:20px}#printarea h2{font-size:14px;margin:16px 0 4px;border-bottom:1px solid #999}#printarea p{margin:2px 0;font-size:12px}}
 .topbar button{background:none;border:1px solid var(--l);border-radius:6px;padding:4px 9px;color:var(--t);cursor:pointer}
 </style></head><body>
 <div id="land"></div>
 <div id="app" style="display:none">
 <div class="topbar" id="topbar"></div>
+<div id="printarea"></div>
 <header><h1 id="ttl">Simulador de apoio à decisão</h1><div id="sum"></div></header>
 <nav id="nav"></nav><main id="main"></main>
 </div>
@@ -85,7 +90,18 @@ if(error){$('lerr').textContent='Utilizador ou palavra-passe incorretos.';return
 AUTH.cur={u:data.user.email};VIEW='app';await cloudLoad(true);renderTop()}
 async function logout(){if(sb)await sb.auth.signOut();AUTH.cur=null;VIEW='land';renderTop()}
 async function renderTop(){$('land').style.display=VIEW=='app'?'none':'';$('app').style.display=VIEW=='app'?'':'none';
-if(VIEW=='land')land();else if(VIEW=='login')loginView();else{$('topbar').innerHTML=`<span>Sessão: <b>${AUTH.cur.u}</b></span><button data-x="logout">Sair</button>`;renderAll()}}
+if(VIEW=='land')land();else if(VIEW=='login')loginView();else{$('topbar').innerHTML=`<span>Sessão: <b>${AUTH.cur.u}</b></span><button data-x="report">📄 Exportar relatório</button><button data-x="logout">Sair</button>`;renderAll()}}
+function printReport(){const r=calc(S,C),I=r.I,sim=r.F.map((v,i)=>v+r.L[0].f[i]+r.L[1].f[i]+r.L[2].f[i]),q=quality(r);
+const rows=[['Faturação '+S.am,eur(I.fm)],['Meta '+S.am,eur(r.tg)],['Variação vs '+S.ab,pc(I.var)],['Distância à meta',eur(I.dist)+' ('+pc(I.distP)+')'],['Faturação incremental',eur(I.inc)],['Custos incrementais',eur(I.cost)],['Desconto concedido',eur(I.ds)],['Margem bruta incremental',eur(I.mb)],['Resultado incremental',eur(I.res)],['ROI',num(I.roi)],['Custo por € adicional',num(I.cpe)],['Valor a 24 meses (P1+P2)',eur(I.v24)],['Resultado operacional sem medidas',eur(r.opB)],['Resultado operacional com medidas',eur(r.op)],['Qualidade da proposta',q.label+' — '+Math.round(q.score)+'/100']];
+let h=`<h1>${esc(S.nome)}</h1><p>${esc(S.setor)} — ${esc(S.sede)}</p><p>Relatório de previsão — gerado em ${new Date().toLocaleString('pt-PT')}${AUTH.cur?' por '+esc(AUTH.cur.u):''}</p>`;
+h+=`<h2>Cenário: meta de crescimento ${pc(S.meta,0)} em ${S.am} (medidas a partir de ${MES[S.mi-1]})</h2>${I.ok?'<p><b>Meta atingida</b></p>':'<p><b>Meta não atingida</b> — '+pc(I.pm)+' da meta</p>'}`;
+h+=tbl(['Indicador','Valor'],rows);
+h+=`<h2>Qualidade da proposta: ${q.label} (${Math.round(q.score)}/100)</h2><p>Ponderação: 40% grau de cumprimento da meta, 30% ROI das medidas, 30% impacto no resultado operacional face ao cenário sem medidas.</p>`+tbl(['Componente','Pontuação (0-100)','Peso'],[['Cumprimento da meta',Math.round(q.metaScore),'40%'],['ROI das medidas',Math.round(q.roiScore),'30%'],['Impacto no resultado operacional',Math.round(q.opScore),'30%']]);
+if(r.warn.length)h+='<h2>Avisos</h2><ul>'+r.warn.map(w=>'<li>'+esc(w)+'</li>').join('')+'</ul>';
+h+='<h2>Faturação mensal (€)</h2>'+tbl(['Mês','Base','P1','P2','P3','Simulado','Meta mensal'],MES.map((m,i)=>[m,eur(r.F[i]),eur(r.L[0].f[i]),eur(r.L[1].f[i]),eur(r.L[2].f[i]),eur(sim[i]),eur(S.hist.base[i]*(1+S.meta))]));
+if(SAVED.length){const rs=SAVED.map(s=>calc(s.S,s.C));const rw=[['Faturação '+S.am,x=>eur(x.I.fm)],['Meta',x=>x.I.ok?'Atingida':'Não atingida ('+pc(x.I.pm)+')'],['Resultado incremental',x=>eur(x.I.res)],['ROI',x=>num(x.I.roi)],['Resultado operacional',x=>eur(x.op)]];
+h+='<h2>Comparação de cenários guardados</h2>'+tbl(['Indicador',...SAVED.map(s=>esc(s.name))],rw.map(([l,f])=>[l,...rs.map(f)]))}
+$('printarea').innerHTML=h;document.title=S.nome+' - relatorio '+new Date().toISOString().slice(0,10);setTimeout(()=>window.print(),60)}
 const $=id=>document.getElementById(id),eur=x=>Math.round(x).toLocaleString('pt-PT').replace(/[\u00a0\u202f]/g,' ')+' €',pc=(x,d=1)=>(x*100).toFixed(d).replace('.',',')+'%',num=(x,d=2)=>(+x).toFixed(d).replace('.',',');
 const esc=s=>String(s).replace(/"/g,'&quot;'),MES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 const root=p=>p[0]=='S'?S:C,get=p=>p.split('.').slice(1).reduce((o,k)=>o[k],root(p)),set=(p,v)=>{const a=p.split('.').slice(1),l=a.pop();a.reduce((o,k)=>o[k],root(p))[l]=v};
@@ -121,7 +137,11 @@ MES.forEach((m,i)=>s+=`<text x="${X(i)-8}" y="${H-8}" font-size="10" fill="#888"
 ser.forEach(q=>{const pts=q.v.map((v,i)=>v==null?null:X(i)+','+Y(v)).filter(x=>x);s+=`<polyline fill="none" stroke="${q.c}" stroke-width="2" ${q.d?'stroke-dasharray="5 4"':''} points="${pts.join(' ')}"/>`});
 return s+'</svg><div>'+ser.map(q=>`<span style="color:${q.c};margin-right:12px">● ${q.n}</span>`).join('')+'</div>'}
 function kp(l,v,c){return`<div class="k"><span>${l}</span><b class="${c||''}">${v}</b></div>`}
-function indic(I,r){return kp('Faturação '+S.am,eur(I.fm))+kp('Variação vs '+S.ab,pc(I.var))+kp('Distância à meta',eur(I.dist)+' ('+pc(I.distP)+')')+kp('Faturação incremental',eur(I.inc))+kp('Custos incrementais',eur(I.cost))+kp('Desconto concedido',eur(I.ds))+kp('Margem bruta incremental',eur(I.mb))+kp('Resultado incremental',eur(I.res))+kp('ROI',num(I.roi))+kp('Custo por € adicional',num(I.cpe))+kp('Valor a 24 meses (P1+P2)',eur(I.v24))+kp('Efeito no ano seguinte',eur(-I.nx))+kp('Resultado operacional sem medidas',eur(r.opB))+kp('Resultado operacional com medidas',eur(r.op))}
+function quality(r){const I=r.I;const metaScore=Math.min(100,I.pm*100);const roiScore=Math.max(0,Math.min(100,50+I.roi*50));
+const opScore=r.opB?Math.max(0,Math.min(100,100-((r.opB-r.op)/Math.abs(r.opB))*100)):100;
+const score=metaScore*.4+roiScore*.3+opScore*.3,label=score>=70?'Boa':score>=40?'Razoável':'Fraca';
+return{score,label,metaScore,roiScore,opScore}}
+function indic(I,r){const q=quality(r);return kp('Faturação '+S.am,eur(I.fm))+kp('Variação vs '+S.ab,pc(I.var))+kp('Distância à meta',eur(I.dist)+' ('+pc(I.distP)+')')+kp('Faturação incremental',eur(I.inc))+kp('Custos incrementais',eur(I.cost))+kp('Desconto concedido',eur(I.ds))+kp('Margem bruta incremental',eur(I.mb))+kp('Resultado incremental',eur(I.res))+kp('ROI',num(I.roi))+kp('Custo por € adicional',num(I.cpe))+kp('Valor a 24 meses (P1+P2)',eur(I.v24))+kp('Efeito no ano seguinte',eur(-I.nx))+kp('Resultado operacional sem medidas',eur(r.opB))+kp('Resultado operacional com medidas',eur(r.op))+kp('Qualidade da proposta',q.label+' ('+Math.round(q.score)+'/100)',q.score>=70?'ok':q.score>=40?'':'ko')}
 function refresh(){R=calc(S,C);const I=R.I;$('ttl').textContent='Simulador: '+S.nome+' — crescer '+pc(S.meta,0)+' em '+S.am;
 $('sum').innerHTML=kp('Trabalhadores',R.ntrab)+kp('Custo anual com pessoal',eur(R.pessoal))+kp('Custos fixos mensais',eur(R.cf))+kp('Margem bruta',pc(R.mp))+kp('Meta '+S.am,eur(R.tg))+kp('Desvio a cobrir',eur(R.gap))+kp('Resultado operacional estimado',eur(R.op));
 const q=(id,h)=>{const e=$(id);if(e)e.innerHTML=h};
@@ -158,7 +178,7 @@ if(!p)return;let v=t.type=='checkbox'?t.checked:(t.type=='number'?(parseFloat(t.
 if(p=='S.nmeta'){const n=Math.min(11,Math.max(0,v));S.hist.meta=Array.from({length:n},(_,i)=>S.hist.meta[i]||0);S.mi=Math.max(S.mi,n+1);return renderAll()}
 set(p,v);if(t.dataset.r)return renderAll();refresh()});
 document.addEventListener('click',e=>{const t=e.target.closest('[data-t],[data-x]');if(!t)return;if(t.dataset.t){tab=t.dataset.t;return renderAll()}const x=t.dataset.x;
-if(x=='tologin'){VIEW='login';return renderTop()}if(x=='dologin')return doLogin();if(x=='logout')return logout();
+if(x=='tologin'){VIEW='login';return renderTop()}if(x=='dologin')return doLogin();if(x=='logout')return logout();if(x=='report')return printReport();
 if(x=='cloudsave')return cloudSave();if(x=='cloudload')return cloudLoad();
 if(x=='addrh')S.rh.push({d:'Novo departamento',n:1,s:1000});else if(/^rh\d/.test(x))S.rh.splice(+x.slice(2),1);else if(x=='addcom')S.com.push({c:'C'+(S.com.length+1),sal:1250,com:.03,via:620,fat:15000,m:12});else if(/^com\d/.test(x))S.com.splice(+x.slice(3),1);
 else if(x=='reset'){S=clone(DEF);C=newC(S.mi)}else if(x=='exp'){const j=JSON.stringify({S,C},null,1);$('ta').value=j;saveFile('base_dados_'+S.nome.replace(/\W+/g,'_')+'.json',j);return}
