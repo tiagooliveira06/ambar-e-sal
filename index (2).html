@@ -1,0 +1,450 @@
+<!DOCTYPE html><html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Simulador: crescer 15% até ao final do ano</title><style>
+:root{--bg:#f6f4f0;--c:#fff;--t:#23272e;--m:#6b7280;--a:#b4622d;--l:#e3ded6;--ok:#2f7d4f;--ko:#b3372d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1b1d21;--c:#25282d;--t:#e8e6e3;--m:#9aa0a8;--l:#3a3e45}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:14px/1.45 system-ui,Segoe UI,sans-serif}
+header{padding:12px 16px;background:var(--c);border-bottom:1px solid var(--l)}h1{font-size:18px;margin:0 0 6px}h3{margin:18px 0 8px;font-size:15px;color:var(--a)}
+#sum{display:flex;flex-wrap:wrap;gap:8px}.k{background:var(--bg);border:1px solid var(--l);border-radius:8px;padding:6px 10px;min-width:120px}.k b{display:block;font-size:15px}.k span{color:var(--m);font-size:11px}
+nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px 16px 0}nav button{border:1px solid var(--l);background:var(--c);color:var(--t);padding:7px 11px;border-radius:8px 8px 0 0;cursor:pointer}nav button.on{background:var(--a);color:#fff;border-color:var(--a)}
+main{padding:12px 16px;max-width:1100px;margin:auto}.card{background:var(--c);border:1px solid var(--l);border-radius:10px;padding:12px;margin-bottom:12px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}label{display:flex;flex-direction:column;font-size:12px;color:var(--m);gap:2px}
+input,select{font:inherit;color:var(--t);background:var(--bg);border:1px solid var(--l);border-radius:6px;padding:5px 7px;width:100%;min-width:60px}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--l);padding:4px 6px;text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}.sc{overflow-x:auto}
+button.b{background:var(--a);color:#fff;border:0;border-radius:6px;padding:6px 11px;cursor:pointer;margin:2px}button.s{background:var(--bg);color:var(--t);border:1px solid var(--l)}
+.ok{color:var(--ok)}.ko{color:var(--ko)}.w{background:#fff4e0;color:#7a4b00;border-radius:6px;padding:6px 10px;margin:6px 0}textarea{width:100%;height:70px;font:11px monospace;background:var(--bg);color:var(--t);border:1px solid var(--l)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}.cards .k{background:var(--c)}small{color:var(--m)}
+.hero{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;background:linear-gradient(160deg,var(--a),#7a3f1d)}
+.hero h1{color:#fff;font-size:clamp(26px,6vw,42px);margin:0 0 6px}.hero p{color:#fce9dc;max-width:480px;margin:0 0 22px}
+.hero button{background:#fff;color:var(--a);border:0;border-radius:8px;padding:12px 26px;font-size:15px;font-weight:600;cursor:pointer}
+.lw{max-width:340px;margin:60px auto;background:var(--c);border:1px solid var(--l);border-radius:12px;padding:22px}
+.lw h2{margin:0 0 4px;font-size:18px}.lw label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--m);margin-bottom:10px}
+.lw input{font:inherit;color:var(--t);background:var(--bg);border:1px solid var(--l);border-radius:6px;padding:9px}
+.lw button{width:100%;background:var(--a);color:#fff;border:0;border-radius:6px;padding:10px;font-size:14px;cursor:pointer;margin-top:4px}
+.err{color:var(--ko);font-size:12px;margin-top:6px}.topbar{display:flex;justify-content:flex-end;gap:8px;padding:6px 16px;background:var(--c);border-bottom:1px solid var(--l);font-size:12px;color:var(--m);align-items:center}
+#printarea{display:none}
+@media print{body *{visibility:hidden}#printarea,#printarea *{visibility:visible}#printarea{display:block;position:absolute;left:0;top:0;width:100%;padding:16px;color:#000;background:#fff}
+#printarea table{width:100%;border-collapse:collapse;margin:8px 0}#printarea td,#printarea th{border:1px solid #999;padding:4px 6px;font-size:11px;text-align:left}
+#printarea h1{margin:0 0 2px;font-size:20px}#printarea h2{font-size:14px;margin:16px 0 4px;border-bottom:1px solid #999}#printarea p{margin:2px 0;font-size:12px}}
+.topbar button{background:none;border:1px solid var(--l);border-radius:6px;padding:4px 9px;color:var(--t);cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+.al{display:flex;gap:8px;align-items:baseline;padding:6px 10px;border-radius:6px;margin:4px 0}.al i{font-style:normal;font-weight:700;min-width:58px}
+.al.erro{background:#fde8e6;color:#8a2a22}.al.aviso{background:#fff4e0;color:#7a4b00}.al.ok{background:#e6f4ea;color:#1f5c38}.al.info{background:var(--bg);color:var(--m)}
+.k.s-ok{border-left:4px solid var(--ok)}.k.s-av{border-left:4px solid #d39b00}.k.s-er{border-left:4px solid var(--ko)}.k.s-na{border-left:4px solid var(--l)}
+.cal td,.cal th{text-align:center;font-size:11px;padding:4px 3px;min-width:54px}.cal td:first-child,.cal th:first-child{text-align:left;min-width:190px}
+.e1{background:#2b6cb0;color:#fff}.e1l{background:#2b6cb030}.e2{background:#b4622d;color:#fff}.e2l{background:#b4622d30}.e3{background:#7b3fa0;color:#fff}.e3l{background:repeating-linear-gradient(45deg,#7b3fa035 0 4px,transparent 4px 8px)}
+.real{background:#8882;color:var(--m)}.leg span{display:inline-block;margin-right:12px;font-size:12px}.leg b{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}.rg label input{padding:0}
+table.tl td,table.tl th{text-align:left;white-space:normal}table.tl2 td{vertical-align:top}table.tl2 td:nth-child(2),table.tl2 th:nth-child(2){text-align:left}
+details summary{cursor:pointer;color:var(--m);font-size:12px;margin-top:8px}
+@media print{#printarea{-webkit-print-color-adjust:exact;print-color-adjust:exact}#printarea svg,#printarea table{break-inside:avoid}#printarea h2{break-after:avoid}#printarea .sc{overflow:visible}#printarea td,#printarea th{white-space:normal}#printarea .cal td,#printarea .cal th{min-width:0;font-size:9px;padding:2px 3px}#printarea .cal td:first-child{min-width:0}}
+</style></head><body>
+<div id="land"></div>
+<div id="app" style="display:none">
+<div class="topbar" id="topbar"></div>
+<div id="printarea"></div>
+<header><h1 id="ttl">Simulador de apoio à decisão</h1><div id="sum"></div></header>
+<nav id="nav"></nav><main id="main"></main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+//#MODEL
+const DEF={"nome": "Âmbar e Sal, Distribuição de Cosmética Profissional, Lda.", "setor": "Distribuição grossista de cosmética e produtos de estética profissional", "sede": "Maia (distrito do Porto)", "equipa": "", "ab": 2025, "am": 2026, "meta": 0.15, "mi": 7, "manual": false, "P": {"SAL": 1250, "COM": 0.03, "VIA": 620, "AJU": 220, "CMU": 45, "REC": 2500, "FOR": 1800, "EQP": 1500, "CAN": 0.1, "NPAG": 14, "TSU": 0.2375, "SEG": 0.015, "SUB": 9, "DIAS": 220, "CN": 580, "RET": 0.8, "DEC": 0.15, "EL": 2.3, "ANT": 0.12, "CFX": 900, "DMAX": 0.3, "REN": 5350, "ENE": 1150, "COMUN": 780, "SEG2": 420, "OUT": 950, "FROTA": 750, "TR": 0.025, "PMR": 45, "PC06": 15526.68, "PEXP": 30902.43, "REF": "c06", "PMAN": 15526.68, "SAZ": 1, "MKTC": 38900}, "ramp": [0.07, 0.2, 0.35, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1], "rh": [{"d": "Gerência e administração", "n": 1, "s": 3900, "auto": false}, {"d": "Direção comercial e formação técnica", "n": 2, "s": 2250, "auto": false}, {"d": "Força de vendas", "n": 6, "s": 1333.33, "auto": true}, {"d": "Vendas internas e apoio ao cliente", "n": 2, "s": 1050, "auto": false}, {"d": "Marketing", "n": 2, "s": 1500, "auto": false}, {"d": "Logística e armazém", "n": 6, "s": 1056.67, "auto": false}, {"d": "Financeiro e administrativo", "n": 3, "s": 1436.67, "auto": false}], "com": [{"c": "C01", "sal": 1450, "com": 0.03, "via": 620, "fat": 38058.25, "m": 12}, {"c": "C02", "sal": 1350, "com": 0.03, "via": 620, "fat": 31059.5, "m": 12}, {"c": "C03", "sal": 1300, "com": 0.03, "via": 620, "fat": 35493.29, "m": 12}, {"c": "C04", "sal": 1400, "com": 0.03, "via": 620, "fat": 32089.6, "m": 12}, {"c": "C05", "sal": 1250, "com": 0.03, "via": 620, "fat": 17811.53, "m": 12}, {"c": "C06", "sal": 1250, "com": 0.03, "via": 620, "fat": 10443.18, "m": 10}, {"c": "INT", "sal": 2100, "com": 0, "via": 0, "fat": 23324.69, "m": 12}], "canais": [{"n": "Anúncios Meta (Instagram e Facebook)", "cpl": 40.27, "conv": 0.01892, "orc": 4967, "desf": 1}, {"n": "Anúncios Google (pesquisa)", "cpl": 41.94, "conv": 0.02688, "orc": 3900, "desf": 1}, {"n": "Email marketing e catálogo", "cpl": 25.45, "conv": 0.03636, "orc": 1400, "desf": 0}, {"n": "Feira profissional", "cpl": 62.21, "conv": 0.02488, "orc": 13333, "desf": 1}, {"n": "Programa de amostras", "cpl": 55.4, "conv": 0.03756, "orc": 5900, "desf": 1}, {"n": "Parcerias com influenciadores de estética", "cpl": 46.71, "conv": 0.0173, "orc": 6750, "desf": 1}], "cats": [{"n": "Perfumaria", "m": 0.4725, "w": 0.11993}, {"n": "Cofres de oferta", "m": 0.3829, "w": 0.04777}, {"n": "Cuidado de rosto", "m": 0.5238, "w": 0.19288}, {"n": "Cuidado de corpo", "m": 0.449, "w": 0.13883}, {"n": "Cabelo", "m": 0.4188, "w": 0.19637}, {"n": "Solares", "m": 0.4199, "w": 0.07489}, {"n": "Unhas", "m": 0.4706, "w": 0.05902}, {"n": "Maquilhagem", "m": 0.4841, "w": 0.07376}, {"n": "Estética profissional", "m": 0.399, "w": 0.07366}, {"n": "Barbearia", "m": 0.4433, "w": 0.02289}], "share": [[0.10725, 0.11822, 0.12058, 0.09565, 0.12362, 0.0796, 0.06675, 0.09441, 0.09655, 0.10542, 0.16084, 0.21904], [0.01466, 0.017, 0.02023, 0.027, 0.06795, 0.01533, 0.01212, 0.00749, 0.00999, 0.04519, 0.10913, 0.14503], [0.26218, 0.22948, 0.19442, 0.22299, 0.17683, 0.17897, 0.1649, 0.2145, 0.21799, 0.19546, 0.1629, 0.15629], [0.16713, 0.1538, 0.16335, 0.14384, 0.12478, 0.12863, 0.15304, 0.12541, 0.14357, 0.15349, 0.12922, 0.10535], [0.21614, 0.19331, 0.20946, 0.20596, 0.17534, 0.19006, 0.19707, 0.19303, 0.20113, 0.21811, 0.19758, 0.1738], [0.02169, 0.01709, 0.0552, 0.08659, 0.11379, 0.17252, 0.18487, 0.12437, 0.07168, 0.02638, 0.01968, 0.00927], [0.05483, 0.07932, 0.05676, 0.05137, 0.04895, 0.05554, 0.05214, 0.06805, 0.07569, 0.07457, 0.06203, 0.0417], [0.06845, 0.08331, 0.083, 0.06484, 0.06272, 0.07888, 0.05344, 0.06917, 0.0729, 0.08073, 0.07719, 0.08784], [0.06555, 0.08374, 0.07337, 0.08605, 0.0863, 0.07724, 0.09381, 0.08143, 0.07909, 0.06965, 0.05699, 0.04503], [0.02211, 0.02472, 0.02362, 0.0157, 0.01972, 0.02323, 0.02186, 0.02214, 0.0314, 0.031, 0.02444, 0.01666]], "hist": {"base": [133254.99, 139062.29, 164116.96, 188659.52, 204591.06, 196834.19, 203922.98, 130554.38, 189749.15, 189301.54, 248261.87, 250165.23], "meta": [137548.77, 148094.68, 174348.12, 189346.6, 216489.35, 210323.06], "prev": [130972.16, 136137.08, 161402.06, 173124.95, 203523.89, 205453.81, 189672.28, 120164.94, 165334.93, 164704.06, 217445.85, 227158.18]}},EST={"CN": 554.44, "RET": 0.8462, "EL": 1.99, "ANT": 0.186, "PEXP": 30902.43, "PC06": 15526.68};
+// Novos parâmetros de apoio à decisão: pesos da qualidade, limites dos alertas e incerteza (Monte Carlo)
+DEF.QW={meta:.4,roi:.3,op:.3};DEF.TH={roi:0,cpe:1,pm:.95};DEF.UNC={PROD:.2,RAMP:.15,CAN:.3,CN:.2,RET:.1,CONV:.25,CPL:.2,EL:.3,ANT:.5,MARG:.05};
+const sum=a=>a.reduce((x,y)=>x+y,0),Z=()=>Array(12).fill(0),clone=o=>JSON.parse(JSON.stringify(o));
+const pers=(n,s,P)=>n*s*P.NPAG*(1+P.TSU+P.SEG)+n*P.SUB*P.DIAS;
+const prodRef=P=>P.REF=='c06'?P.PC06:P.REF=='exp'?P.PEXP:P.PMAN;
+function sync(S){const c=S.com.filter(x=>x.c!='INT'),r=S.rh.find(x=>x.auto);if(r){r.n=c.length;r.s=c.length?sum(c.map(x=>x.sal))/c.length:0}}
+function newC(mi){return{p1:[0,1].map(()=>({n:0,h:mi})),p2:[0,1,2].map(()=>({c:0,B:0,t:mi})),p3:[0,1,2].map(()=>({d:0,K:[],m:mi,len:1}))}}
+function calc(S,C){sync(S);const P=S.P,b=S.hist.base,r=S.hist.meta,nr=r.length,g=sum(r)/sum(b.slice(0,nr))-1,mi=Math.max(S.mi,nr+1);
+const F=b.map((v,i)=>i<nr?r[i]:v*(1+g)),Tb=sum(b),tg=Tb*(1+S.meta),Fs=sum(F),cs=S.cats,sw=sum(cs.map(c=>c.w))||1,mp=sum(cs.map(c=>c.m*c.w))/sw;
+const av=P.REF=='c06'?sum(b.slice(0,6))/6:Tb/12,Sm=b.map(v=>P.SAZ?v/av:1);
+const cm=P.SAL*P.NPAG/12*(1+P.TSU+P.SEG)+P.SUB*P.DIAS/12+P.VIA+P.AJU+P.CMU,ce=P.REC+P.FOR+P.EQP,pref=prodRef(P);
+const wK=(i,m)=>S.manual?cs[i].w/sw:(S.share[i]?S.share[i][m]:cs[i].w/sw);
+const L=[0,1,2].map(()=>({f:Z(),c:0,mb:0,ds:0,v24:0,nx:0})),warn=[];
+(C.p1||[]).forEach(v=>{if(!(v.n>0))return;const h=Math.max(v.h,mi);for(let j=0;j<24;j++){const m=h+j,f=v.n*pref*Sm[(m-1)%12]*S.ramp[Math.min(j,9)]*(1-P.CAN),c=v.n*cm+P.COM*f+(j?0:v.n*ce);L[0].v24+=f*mp-c-P.TR*f;if(m<=12){L[0].f[m-1]+=f;L[0].c+=c;L[0].mb+=f*mp}}});
+(C.p2||[]).forEach(v=>{const k=S.canais[v.c];if(!k||!(v.B>0))return;const t=Math.max(v.t,mi),cl=v.B>k.orc?k.cpl*(1+P.DEC*Math.log2(v.B/k.orc)):k.cpl,nc=v.B/cl*k.conv,s=t+k.desf;
+for(let j=0;j<24;j++){const m=t+j,q=m-s,f=q<0?0:nc*P.CN*(q<6?1:P.RET);L[1].v24+=f*mp-(j?0:v.B)-P.TR*f;if(m<=12){L[1].f[m-1]+=f;L[1].mb+=f*mp}}L[1].c+=v.B});
+const used={};(C.p3||[]).forEach((v,pi)=>{if(!(v.d>0)||!v.K.length)return;L[2].c+=P.CFX;const q=1+P.EL*v.d;let last=0;
+for(let j=0;j<v.len;j++){const m=v.m+j;if(m>12)break;if(m<mi){warn.push('Promoção '+(pi+1)+': o mês '+m+' é anterior ao início das medidas; ignorado.');continue}last=m;
+v.K.forEach(i=>{const key=i+'_'+m;if(used[key]){warn.push('Promoção '+(pi+1)+': "'+cs[i].n+'" já está noutra promoção no mês '+m+'; ignorada.');return}used[key]=1;const Fk=F[m-1]*wK(i,m-1),fat=Fk*(1-v.d)*q,cg=Fk*q*(1-cs[i].m);L[2].f[m-1]+=fat-Fk;L[2].mb+=fat-cg-Fk*cs[i].m;L[2].ds+=Fk*q*v.d});
+if(m==11&&v.d+0.25>P.DMAX)warn.push('Promoção '+(pi+1)+': em novembro, '+Math.round(v.d*100)+'% + 25% (Black Friday do ano base) excede o desconto máximo de '+Math.round(P.DMAX*100)+'%.')}
+if(last){const m2=last+1;v.K.forEach(i=>{if(m2<=12){const Fk=F[m2-1]*wK(i,m2-1);L[2].f[m2-1]-=Fk*P.ANT;L[2].mb-=Fk*P.ANT*cs[i].m}else L[2].nx+=b[0]*(1+g)*wK(i,0)*P.ANT})}});
+L.forEach(l=>{l.fat=sum(l.f);l.res=l.mb-l.c-P.TR*l.fat});const T=k=>sum(L.map(l=>l[k]));
+const pessoal=sum(S.rh.map(r=>pers(r.n,r.s,P))),cf=P.REN+P.ENE+P.COMUN+P.SEG2+P.OUT+P.FROTA,nc=S.com.filter(x=>x.c!='INT');
+const gasto=pessoal+12*cf+12*sum(nc.map(x=>x.via))+P.TR*Fs+sum(S.com.map(x=>x.com*x.fat*x.m*(1+g)))+P.MKTC,opB=Fs*mp-gasto;
+const inc=T('fat'),cost=T('c'),ds=T('ds'),mb=T('mb'),res=mb-cost-P.TR*inc,fm=Fs+inc;
+const gn=(tg-sum(r))/sum(b.slice(nr))-1;
+return{g,F,Tb,tg,Fs,mp,Sm,cm,ce,L,warn,pessoal,cf,gasto,opB,op:opB+res,nr,mi,need:b.map((v,i)=>i<nr?0:v*(1+gn)),gap:tg-Fs,ntrab:sum(S.rh.map(r=>r.n)),
+I:{fm,var:fm/Tb-1,dist:tg-fm,distP:(tg-fm)/tg,ok:fm>=tg,pm:fm/tg,inc,cost,ds,mb,res,roi:res/(cost+ds||1),cpe:inc?(cost+ds)/inc:0,v24:L[0].v24+L[1].v24,nx:L[2].nx}}}
+function preset(S,x){const C=newC(Math.max(S.mi,S.hist.meta.length+1)),mi=C.p1[0].h;
+if('ADE'.includes(x))C.p1[0]={n:2,h:mi};if('BDE'.includes(x)){C.p2[0]={c:0,B:S.canais[0].orc,t:9};C.p2[1]={c:3,B:S.canais[3].orc,t:10}}
+if('CDE'.includes(x))C.p3[0]={d:.15,K:S.cats.map((_,i)=>i),m:11,len:2};
+if(x=='E'){S.rh.forEach(r=>r.s*=1.05);S.com.forEach(c=>c.sal*=1.05);S.cats.forEach(c=>c.m-=.01)}return C}
+//#ENDMODEL
+let S=clone(DEF),C=newC(7),R,SAVED=[],tab='cfg';
+let AUTH={cur:null};
+let VIEW='land',CLOUD_MSG='';
+// Estado da interface das novas funcionalidades (não é guardado na base de dados nem no histórico)
+let U={sv:.1,si:'op',mcN:1000,mcI:'op',oB:50000,oO:'res',oN:3000,oP1:true,oP2:true,oP3:true};
+const sb=(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_URL.indexOf('COLOQUE')<0)?window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY):null;
+async function saveFile(filename,data){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));a.download=filename;a.click();return true}catch(_){return false}}
+function msg(h){const e=$('msg');if(e)e.innerHTML=h}
+async function cloudSave(){if(!sb)return msg('<div class="w">Supabase não está configurado (edite config.js).</div>');
+msg('<div class="w">A guardar…</div>');const {error}=await sb.from('dados_empresa').upsert({id:1,payload:{S,C},updated_at:new Date().toISOString()});
+msg(error?`<div class="w">Erro ao guardar na nuvem: ${error.message}</div>`:'<div class="w">Guardado na nuvem com sucesso.</div>')}
+async function cloudLoad(silent){if(!sb)return;const {data,error}=await sb.from('dados_empresa').select('payload').eq('id',1).maybeSingle();
+if(error){if(!silent)msg(`<div class="w">Erro ao carregar da nuvem: ${error.message}</div>`);return}
+if(data&&data.payload){if(!silent)snap('Carregar dados da nuvem');S=Object.assign(clone(DEF),data.payload.S||{});C=data.payload.C||newC(S.mi);if(!silent){renderAll();msg('<div class="w">Dados carregados da nuvem.</div>')}}}
+function land(){$('land').innerHTML=`<div class="hero"><h1>${S.nome}</h1><p>${S.setor} — ${S.sede}<br>Simulador de apoio à decisão comercial</p><button data-x="tologin">Aceder à aplicação</button></div>`}
+function loginView(){$('land').innerHTML=`<div class="lw"><h2>Iniciar sessão</h2><p><small>${S.nome}</small></p><label>Email<input id="lu" type="email" autocapitalize="off"></label><label>Palavra-passe<input id="lp" type="password"></label><button data-x="dologin">Entrar</button><div class="err" id="lerr"></div>${sb?'':'<p><small>Supabase não está configurado — edite config.js com o URL e a chave anon do projeto.</small></p>'}</div>`}
+async function doLogin(){if(!sb){$('lerr').textContent='Supabase não está configurado (config.js).';return}
+const email=$('lu').value.trim(),p=$('lp').value;$('lerr').textContent='A entrar…';
+const {data,error}=await sb.auth.signInWithPassword({email,password:p});
+if(error){$('lerr').textContent='Utilizador ou palavra-passe incorretos.';return}
+AUTH.cur={u:data.user.email};VIEW='app';await cloudLoad(true);renderTop()}
+async function logout(){if(sb)await sb.auth.signOut();AUTH.cur=null;VIEW='land';renderTop()}
+async function renderTop(){$('land').style.display=VIEW=='app'?'none':'';$('app').style.display=VIEW=='app'?'':'none';
+if(VIEW=='land')land();else if(VIEW=='login')loginView();else{$('topbar').innerHTML=`<span>Sessão: <b>${AUTH.cur.u}</b></span><button data-x="undo" title="Anular (Ctrl+Z)">↶ Anular</button><button data-x="redo" title="Refazer (Ctrl+Y)">↷ Refazer</button><button data-x="xlsx">📊 Exportar Excel</button><button data-x="report">📄 Exportar relatório</button><button data-x="logout">Sair</button>`;renderAll()}}
+function printReport(){const r=calc(S,C),I=r.I,sim=r.F.map((v,i)=>v+r.L[0].f[i]+r.L[1].f[i]+r.L[2].f[i]),q=quality(r);
+const rows=[['Faturação '+S.am,eur(I.fm)],['Meta '+S.am,eur(r.tg)],['Variação vs '+S.ab,pc(I.var)],['Distância à meta',eur(I.dist)+' ('+pc(I.distP)+')'],['Faturação incremental',eur(I.inc)],['Custos incrementais',eur(I.cost)],['Desconto concedido',eur(I.ds)],['Margem bruta incremental',eur(I.mb)],['Resultado incremental',eur(I.res)],['ROI',num(I.roi)],['Custo por € adicional',num(I.cpe)],['Valor a 24 meses (P1+P2)',eur(I.v24)],['Resultado operacional sem medidas',eur(r.opB)],['Resultado operacional com medidas',eur(r.op)],['Qualidade da proposta',q.label+' — '+Math.round(q.score)+'/100']];
+let h=`<h1>${esc(S.nome)}</h1><p>${esc(S.setor)} — ${esc(S.sede)}</p><p>Relatório de previsão — gerado em ${new Date().toLocaleString('pt-PT')}${AUTH.cur?' por '+esc(AUTH.cur.u):''}</p>`;
+h+=`<h2>Cenário: meta de crescimento ${pc(S.meta,0)} em ${S.am} (medidas a partir de ${MES[S.mi-1]})</h2>${I.ok?'<p><b>Meta atingida</b></p>':'<p><b>Meta não atingida</b> — '+pc(I.pm)+' da meta</p>'}`;
+h+=tbl(['Indicador','Valor'],rows);
+h+='<h2>Painel de alertas</h2><ul>'+alertas(r,false).map(a=>`<li><b>${NIVEL[a.nivel]}:</b> ${escH(a.txt)}</li>`).join('')+'</ul>';
+const qwr=qw();h+=`<h2>Qualidade da proposta: ${q.label} (${Math.round(q.score)}/100)</h2><p>Ponderação: ${pc(qwr.meta,0)} grau de cumprimento da meta, ${pc(qwr.roi,0)} ROI das medidas, ${pc(qwr.op,0)} impacto no resultado operacional face ao cenário sem medidas.</p>`+tbl(['Componente','Pontuação (0-100)','Peso'],[['Cumprimento da meta',Math.round(q.metaScore),pc(qwr.meta,0)],['ROI das medidas',Math.round(q.roiScore),pc(qwr.roi,0)],['Impacto no resultado operacional',Math.round(q.opScore),pc(qwr.op,0)]]);
+if(r.warn.length)h+='<h2>Avisos</h2><ul>'+r.warn.map(w=>'<li>'+esc(w)+'</li>').join('')+'</ul>';
+h+='<h2>Faturação mensal (€)</h2>'+tbl(['Mês','Base','P1','P2','P3','Simulado','Meta mensal'],MES.map((m,i)=>[m,eur(r.F[i]),eur(r.L[0].f[i]),eur(r.L[1].f[i]),eur(r.L[2].f[i]),eur(sim[i]),eur(S.hist.base[i]*(1+S.meta))]));
+h+=reportExtra(r);
+if(SAVED.length){
+const names=['Atual (em configuração)',...SAVED.map(s=>s.name)];
+const results=[r,...SAVED.map(s=>calc(s.S,s.C))];
+const qs=results.map(x=>quality(x));
+const rw=[
+ ['Faturação '+S.am,(x)=>eur(x.I.fm)],
+ ['Meta atingida?',(x)=>x.I.ok?'Sim':'Não ('+pc(x.I.pm)+')'],
+ ['Variação vs '+S.ab,(x)=>pc(x.I.var)],
+ ['Distância à meta',(x)=>eur(x.I.dist)],
+ ['Faturação incremental',(x)=>eur(x.I.inc)],
+ ['Custos incrementais',(x)=>eur(x.I.cost)],
+ ['Desconto concedido',(x)=>eur(x.I.ds)],
+ ['Margem bruta incremental',(x)=>eur(x.I.mb)],
+ ['Resultado incremental',(x)=>eur(x.I.res)],
+ ['ROI',(x)=>num(x.I.roi)],
+ ['Custo por € adicional',(x)=>num(x.I.cpe)],
+ ['Valor a 24 meses (P1+P2)',(x)=>eur(x.I.v24)],
+ ['Efeito no ano seguinte',(x)=>eur(-x.I.nx)],
+ ['Resultado operacional sem medidas',(x)=>eur(x.opB)],
+ ['Resultado operacional com medidas',(x)=>eur(x.op)],
+];
+h+='<h2>Comparação de cenários</h2>'+tbl(['Indicador',...names],rw.map(([l,f])=>[l,...results.map(f)]));
+h+=tbl(['Qualidade da proposta',...names],[['Pontuação (0-100)',...qs.map(q=>Math.round(q.score)+' — '+q.label)]]);
+const palette=['#2f7d4f','#b4622d','#2b6cb0','#b3372d','#6b7280'];
+const series=results.map((x,i)=>({n:names[i],c:palette[i%palette.length],v:x.F.map((v,m)=>v+x.L[0].f[m]+x.L[1].f[m]+x.L[2].f[m])}));
+series.push({n:'Meta mensal',c:'#000',d:1,v:S.hist.base.map(v=>v*(1+S.meta))});
+h+='<h2>Faturação mensal — comparação de cenários</h2>'+chart(series);
+}
+$('printarea').innerHTML=h;document.title=S.nome+' - relatorio '+new Date().toISOString().slice(0,10);setTimeout(()=>window.print(),60)}
+const $=id=>document.getElementById(id),eur=x=>Math.round(x).toLocaleString('pt-PT').replace(/[\u00a0\u202f]/g,' ')+' €',pc=(x,d=1)=>(x*100).toFixed(d).replace('.',',')+'%',num=(x,d=2)=>(+x).toFixed(d).replace('.',',');
+const esc=s=>String(s).replace(/"/g,'&quot;'),MES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const root=p=>p[0]=='S'?S:p[0]=='U'?U:C,get=p=>p.split('.').slice(1).reduce((o,k)=>o[k],root(p)),set=(p,v)=>{const a=p.split('.').slice(1),l=a.pop();a.reduce((o,k)=>o[k],root(p))[l]=v};
+const I=(p,o={})=>{const v=get(p);return o.t?`<input data-p="${p}" value="${esc(v)}">`:`<input type="number" step="${o.s||'any'}" ${o.min!=null?'min='+o.min:''} ${o.max!=null?'max='+o.max:''} data-p="${p}" ${o.pc?'data-pc=1':''} value="${o.pc?+(v*100).toFixed(4):+(+v).toFixed(4)}">`};
+const fl=(l,p,o)=>`<label>${l}${I(p,o)}</label>`,mo=()=>{const a=[];for(let m=Math.max(S.mi,S.hist.meta.length+1);m<=12;m++)a.push(m);return a};
+const mSel=p=>`<select data-p="${p}" data-n=1>${mo().map(m=>`<option value=${m} ${get(p)==m?'selected':''}>${MES[m-1]}</option>`).join('')}</select>`;
+const tbl=(h,rows)=>`<div class="sc"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const PT={SAL:'Salário base (€/mês)',COM:'Comissão (%)',VIA:'Viatura (€/mês)',AJU:'Ajudas de custo (€/mês)',CMU:'Comunicações (€/mês)',REC:'Recrutamento (€)',FOR:'Formação inicial (€)',EQP:'Equipamento e amostras (€)',CAN:'Canibalização (%)'};
+function cfgHTML(){const P='P.';let h=`<div class="card"><h3>a) Identificação e meta</h3><div class="g">${fl('Empresa','S.nome',{t:1})}${fl('Setor','S.setor',{t:1})}${fl('Sede','S.sede',{t:1})}${fl('Equipa','S.equipa',{t:1})}${fl('Ano base','S.ab')}${fl('Ano da meta','S.am')}${fl('Meta de crescimento (%)','S.meta',{pc:1})}${fl('Mês de início das medidas (1-12)','S.mi',{min:S.hist.meta.length+1,max:12})}</div></div>`;
+h+=`<div class="card"><h3>b) Histórico de faturação (€, sem IVA)</h3><label style="flex-direction:row;gap:6px"><input type="checkbox" style="width:auto" data-p="S.manual" data-r=1 ${S.manual?'checked':''}> Introduzir manualmente (usa os pesos anuais das categorias em todos os meses)</label>`;
+if(S.manual)h+=`<div class="g">${fl('Meses reais do ano da meta (0-11)','S.nmeta',{min:0,max:11})}</div><div class="g">${S.hist.base.map((_,i)=>fl('Ano base '+MES[i],'S.hist.base.'+i)).join('')}${S.hist.meta.map((_,i)=>fl('Ano meta '+MES[i],'S.hist.meta.'+i)).join('')}</div>`;
+else h+=tbl(['Ano',...MES],[['Base',...S.hist.base.map(eur)],['Meta (real)',...S.hist.meta.map(eur)]].map(r=>r));
+h+=`</div><div class="card"><h3>c) Recursos humanos</h3>${tbl(['Departamento','N.º','Salário médio (€)',''],S.rh.map((r,i)=>[r.auto?r.d+' (auto)':I('S.rh.'+i+'.d',{t:1}),r.auto?r.n:I('S.rh.'+i+'.n'),r.auto?eur(r.s):I('S.rh.'+i+'.s'),r.auto?'':`<button class="b s" data-x="rh${i}">✕</button>`]))}<button class="b s" data-x="addrh">+ Departamento</button><div class="g">${fl('Pagamentos/ano','P.NPAG')}${fl('TSU empregador (%)','P.TSU',{pc:1})}${fl('Seguro AT (%)','P.SEG',{pc:1})}${fl('Subsídio alimentação (€/dia)','P.SUB')}${fl('Dias úteis/ano','P.DIAS')}</div><p id="rht"></p></div>`.replace(/'P\./g,"'S.P.").replace(/"P\./g,'"S.P.');
+h+=`<div class="card"><h3>d) Força de vendas</h3>${tbl(['Cód.','Salário (€)','Comissão (%)','Viatura (€/mês)','Fat. média mensal (€)','Meses ativos',''],S.com.map((x,i)=>[I('S.com.'+i+'.c',{t:1}),I('S.com.'+i+'.sal'),I('S.com.'+i+'.com',{pc:1}),I('S.com.'+i+'.via'),I('S.com.'+i+'.fat'),I('S.com.'+i+'.m'),`<button class="b s" data-x="com${i}">✕</button>`]))}<button class="b s" data-x="addcom">+ Comercial</button>
+<h3>Novo comercial</h3><div class="g">${Object.keys(PT).map(k=>fl(PT[k],'S.P.'+k,{pc:/COM|CAN/.test(k)})).join('')}<label>Produtividade de referência<select data-p="S.P.REF"><option value="c06" ${S.P.REF=='c06'?'selected':''}>C06 (jan-jun)</option><option value="exp" ${S.P.REF=='exp'?'selected':''}>Média dos experientes</option><option value="man" ${S.P.REF=='man'?'selected':''}>Valor manual</option></select></label>${fl('Prod. C06 (€/mês)','S.P.PC06')}${fl('Prod. experientes (€/mês)','S.P.PEXP')}${fl('Prod. manual (€/mês)','S.P.PMAN')}<label style="flex-direction:row;gap:6px"><input type="checkbox" style="width:auto" data-p="S.P.SAZ" data-n2=1 ${S.P.SAZ?'checked':''}> Sazonalidade S(m)</label></div><h3>Curva de rampa (% da produtividade)</h3><div class="g">${S.ramp.map((_,i)=>fl('Mês '+(i+1)+(i==9?'+':''),'S.ramp.'+i,{pc:1})).join('')}</div></div>`;
+h+=`<div class="card"><h3>e) Produtos e margens</h3>${tbl(['Categoria','Margem bruta (%)','Peso anual (%)'],S.cats.map((c,i)=>[c.n,I('S.cats.'+i+'.m',{pc:1}),I('S.cats.'+i+'.w',{pc:1})]))}<p id="mpt"></p></div>`;
+h+=`<div class="card"><h3>f) Marketing</h3>${tbl(['Canal','CPL (€)','Conversão (%)','Orçamento médio (€)','Desfasamento (meses)'],S.canais.map((c,i)=>[c.n,I('S.canais.'+i+'.cpl'),I('S.canais.'+i+'.conv',{pc:1}),I('S.canais.'+i+'.orc'),I('S.canais.'+i+'.desf')]))}<div class="g">${fl('Compra média mensal do novo cliente (€)','S.P.CN')}${fl('Retenção a 6 meses (%)','S.P.RET',{pc:1})}${fl('Rendimentos decrescentes (%)','S.P.DEC',{pc:1})}${fl('Marketing corrente (€/ano)','S.P.MKTC')}</div></div>`;
+h+=`<div class="card"><h3>g) Promoções</h3><div class="g">${fl('Elasticidade','S.P.EL')}${fl('Antecipação (%)','S.P.ANT',{pc:1})}${fl('Custo fixo por promoção (€)','S.P.CFX')}${fl('Desconto máximo (%)','S.P.DMAX',{pc:1})}</div><h3>h) Custos fixos e tesouraria</h3><div class="g">${fl('Rendas (€/mês)','S.P.REN')}${fl('Energia (€/mês)','S.P.ENE')}${fl('Comunicações (€/mês)','S.P.COMUN')}${fl('Seguros (€/mês)','S.P.SEG2')}${fl('Outros (€/mês)','S.P.OUT')}${fl('Viatura distribuição (€/mês)','S.P.FROTA')}${fl('Transportes (% fat.)','S.P.TR',{pc:1})}${fl('PMR (dias)','S.P.PMR')}</div></div>
+<div class="card"><h3>Base de dados</h3><button class="b" data-x="cloudsave">☁ Guardar na nuvem</button><button class="b s" data-x="cloudload">☁ Carregar da nuvem</button><br><br><button class="b" data-x="reset">Repor valores do Excel</button><button class="b" data-x="exp">Exportar base de dados (.json)</button><button class="b s" data-x="impc">Importar base de dados (.json)</button><button class="b s" data-x="impx">Importar Excel atualizado (.xlsx)</button><input type="file" id="f1" accept=".json" hidden><input type="file" id="f2" accept=".xlsx,.xlsm" hidden><textarea id="ta" placeholder="Cole aqui o JSON da base de dados para importar, ou copie o exportado"></textarea><button class="b s" data-x="impt">Importar texto colado</button><button class="b s" data-x="cp">Copiar</button><div id="msg"></div></div>`;return h}
+function leverHTML(k){let h='<div class="card">';if(k=='p1'){h+=`<h3>P1. Aumentar a equipa de vendas</h3><p id="p1c"></p>`+tbl(['Vaga','N.º comerciais (0-6)','Mês de entrada'],C.p1.map((v,i)=>[i+1,I('C.p1.'+i+'.n',{min:0,max:6}),mSel('C.p1.'+i+'.h')]))}
+if(k=='p2')h+=`<h3>P2. Campanhas de marketing</h3>`+tbl(['Campanha','Canal','Orçamento (€)','Mês'],C.p2.map((v,i)=>[i+1,`<select data-p="C.p2.${i}.c" data-n=1>${S.canais.map((c,j)=>`<option value=${j} ${v.c==j?'selected':''}>${c.n}</option>`).join('')}</select>`,I('C.p2.'+i+'.B'),mSel('C.p2.'+i+'.t')]));
+if(k=='p3')h+=`<h3>P3. Promoções</h3>`+tbl(['Promoção','Desconto (%)','Mês inicial','N.º meses','Categorias'],C.p3.map((v,i)=>[i+1,I('C.p3.'+i+'.d',{pc:1,min:0,max:60}),mSel('C.p3.'+i+'.m'),I('C.p3.'+i+'.len',{min:1,max:6}),S.cats.map((c,j)=>`<label style="flex-direction:row;display:inline-flex;gap:3px;margin-right:6px"><input type="checkbox" style="width:auto;min-width:0" data-k="C.p3.${i}.K" data-i=${j} ${v.K.includes(j)?'checked':''}>${c.n}</label>`).join('')]));
+return h+`<div id="${k}r"></div></div>`}
+function resHTML(){return`<div class="card" id="rc"></div>
+<div class="card"><h3>Painel de alertas</h3><div class="cards" id="semaf"></div><div id="alrt"></div><details><summary>Ajustar os limites dos alertas</summary><div class="g">${fl('ROI mínimo aceitável','S.TH.roi')}${fl('Custo máximo por € adicional','S.TH.cpe')}${fl('Meta: zona amarela a partir de (%)','S.TH.pm',{pc:1,min:0,max:100})}</div></details></div>
+<div class="card"><h3>Ponte da faturação: do cenário base à meta</h3><div id="wf1"></div><h3>Ponte do resultado operacional</h3><div id="wf2"></div></div>
+<div class="card"><h3>Pesos da qualidade da proposta</h3><p><small>Defina a importância de cada critério. Os pesos são normalizados para somarem 100%.</small></p><div class="rg">${[['meta','Cumprimento da meta'],['roi','ROI das medidas'],['op','Impacto no resultado operacional']].map(([k,l])=>`<label>${l}<input type="range" min="0" max="100" step="5" data-p="S.QW.${k}" data-pc=1 value="${Math.round((S.QW||DEF.QW)[k]*100)}"></label>`).join('')}</div><p id="qwt"></p></div>
+<div class="card"><h3>Faturação mensal</h3><div id="ch"></div></div><div class="card"><h3>Contributo mensal das medidas</h3><div id="rt"></div></div>`}
+function cmpHTML(){return`<div class="card"><label>Nome do cenário<input id="sn" value="Cenário ${SAVED.length+1}"></label><button class="b" data-x="save">Guardar cenário atual</button> <small>Máx. 4. Testes: </small>${'ABCDE'.split('').map(x=>`<button class="b s" data-x="pre${x}">${x}</button>`).join('')}</div><div class="card sc" id="cmp"></div>`}
+function presHTML(){return`<div class="card"><h3>Regras do modelo (mês a mês, de MES_INICIO a dezembro)</h3><ul><li><b>Cenário base</b>: Fbase(m) = fat. do mês m no ano base × (1+g); g = crescimento homólogo acumulado (só meses reais). Meta mensal = ano base × (1+meta).</li><li><b>Sazonalidade</b>: S(m) = fat. mês m ÷ média mensal (jan-jun se ref. C06; anual caso contrário); pode ser desligada.</li><li><b>P1</b>: Fp1(m) = PROD_REF × S(m) × RAMPA_k × (1−CANIB), k = m−h+1 (máx. 10). Custo = CUSTO_MENSAL + COMISSÃO×Fp1; no mês h + custos de entrada. CUSTO_MENSAL = SAL×N_PAG/12×(1+TSU+SEG) + SUB×DIAS/12 + viatura + ajudas + comunicações.</li><li><b>P2</b>: CPL efetivo = CPL×(1+REND_DECR×log2(B/ORC)) se B&gt;ORC. Novos clientes = B/CPL efetivo × CONV. Compram a partir de t+desfasamento: COMPRA_NOVO nos 6 primeiros meses e ×RETENÇÃO depois. Sem fator S (a regra do prompt só o prevê em P1).</li><li><b>P3</b>: FbaseK = Fbase × peso das categorias no mês (ano base). Fat. promo = FbaseK×(1−d)×(1+ELAST×d). Antecipação no mês seguinte: −FbaseK×ANTECIP (se janeiro seguinte: indicador «efeito no ano seguinte»). Custo mercadorias = FbaseK×(1+ELAST×d)×(1−margem). Desconto = FbaseK×(1+ELAST×d)×d. Custo fixo por promoção. Aviso em novembro se d+25% &gt; máximo.</li><li><b>Margem incremental</b>: P1/P2 = fat. × margem ponderada; P3 = variação de (fat. − custo mercadorias). <b>Resultado</b> = margem − custos − TRANSP×fat. <b>ROI</b> = resultado ÷ (custos + desconto). <b>Custo/€ adicional</b> = (custos + desconto) ÷ fat. incremental.</li><li><b>Valor a 24 meses</b>: resultado de P1 e P2 em 24 meses a contar da entrada/campanha. <b>Combinação</b>: soma das alavancas (pressuposto de aditividade).</li><li><b>Resultado operacional</b> = fat. base × margem ponderada − gastos base (pessoal, 12×custos fixos, viaturas comerciais ×12, transportes, comissões atuais, marketing corrente) + resultado incremental.</li></ul></div><div class="card"><h3>Origem dos parâmetros</h3><div id="orig"></div></div>`}
+function usersHTML(){return `<div class="card"><h3>Conta e acessos</h3><p>Sessão iniciada como <b>${AUTH.cur.u}</b>.</p><p><small>Os utilizadores com acesso são geridos fora desta aplicação, no separador <b>Authentication → Users</b> do projeto Supabase (só quem tiver acesso ao painel do Supabase pode criar ou remover contas). Isto garante palavras-passe encriptadas e um verdadeiro controlo de acessos.</small></p></div>`}
+const TABS={cfg:['Configurar empresa',cfgHTML],users:['Conta',usersHTML],p1:['P1 Força de vendas',()=>leverHTML('p1')],p2:['P2 Marketing',()=>leverHTML('p2')],p3:['P3 Promoções',()=>leverHTML('p3')],res:['Resultados e alertas',resHTML],cal:['Calendário',calHTML],risk:['Sensibilidade e risco',riskHTML],opt:['Otimizador',optHTML],cmp:['Comparar cenários',cmpHTML],hist:['Histórico',histHTML],pres:['Pressupostos e fórmulas',presHTML]};
+function renderAll(){$('nav').innerHTML=Object.keys(TABS).map(k=>`<button data-t="${k}" class="${k==tab?'on':''}">${TABS[k][0]}</button>`).join('');$('main').innerHTML=TABS[tab][1]();refresh()}
+function chart(ser){const W=700,H=280,p=42,all=ser.flatMap(s=>s.v.filter(x=>x!=null)),mx=Math.max(...all)*1.05,mn=Math.min(...all)*.9,X=i=>p+i*(W-p-10)/11,Y=v=>H-24-(v-mn)/(mx-mn)*(H-40);
+let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">`;for(let i=0;i<5;i++){const v=mn+(mx-mn)*i/4;s+=`<line x1="${p}" x2="${W-10}" y1="${Y(v)}" y2="${Y(v)}" stroke="#8884" /><text x="2" y="${Y(v)+4}" font-size="10" fill="#888">${Math.round(v/1000)}k</text>`}
+MES.forEach((m,i)=>s+=`<text x="${X(i)-8}" y="${H-8}" font-size="10" fill="#888">${m}</text>`);
+ser.forEach(q=>{const pts=q.v.map((v,i)=>v==null?null:X(i)+','+Y(v)).filter(x=>x);s+=`<polyline fill="none" stroke="${q.c}" stroke-width="2" ${q.d?'stroke-dasharray="5 4"':''} points="${pts.join(' ')}"/>`});
+return s+'</svg><div>'+ser.map(q=>`<span style="color:${q.c};margin-right:12px">● ${q.n}</span>`).join('')+'</div>'}
+function kp(l,v,c){return`<div class="k"><span>${l}</span><b class="${c||''}">${v}</b></div>`}
+function quality(r){const I=r.I;const metaScore=Math.min(100,I.pm*100);const roiScore=Math.max(0,Math.min(100,50+I.roi*50));
+const opScore=r.opB?Math.max(0,Math.min(100,100-((r.opB-r.op)/Math.abs(r.opB))*100)):100;
+const w=qw(),score=metaScore*w.meta+roiScore*w.roi+opScore*w.op,label=score>=70?'Boa':score>=40?'Razoável':'Fraca';
+return{score,label,metaScore,roiScore,opScore}}
+function indic(I,r){const q=quality(r);return kp('Faturação '+S.am,eur(I.fm))+kp('Variação vs '+S.ab,pc(I.var))+kp('Distância à meta',eur(I.dist)+' ('+pc(I.distP)+')')+kp('Faturação incremental',eur(I.inc))+kp('Custos incrementais',eur(I.cost))+kp('Desconto concedido',eur(I.ds))+kp('Margem bruta incremental',eur(I.mb))+kp('Resultado incremental',eur(I.res))+kp('ROI',num(I.roi))+kp('Custo por € adicional',num(I.cpe))+kp('Valor a 24 meses (P1+P2)',eur(I.v24))+kp('Efeito no ano seguinte',eur(-I.nx))+kp('Resultado operacional sem medidas',eur(r.opB))+kp('Resultado operacional com medidas',eur(r.op))+kp('Qualidade da proposta',q.label+' ('+Math.round(q.score)+'/100)',q.score>=70?'ok':q.score>=40?'':'ko')}
+function refresh(){R=calc(S,C);const I=R.I;$('ttl').textContent='Simulador: '+S.nome+' — crescer '+pc(S.meta,0)+' em '+S.am;
+$('sum').innerHTML=kp('Trabalhadores',R.ntrab)+kp('Custo anual com pessoal',eur(R.pessoal))+kp('Custos fixos mensais',eur(R.cf))+kp('Margem bruta',pc(R.mp))+kp('Meta '+S.am,eur(R.tg))+kp('Desvio a cobrir',eur(R.gap))+kp('Resultado operacional estimado',eur(R.op));
+const q=(id,h)=>{const e=$(id);if(e)e.innerHTML=h};
+q('rht',`Total: <b>${R.ntrab}</b> trabalhadores; custo anual com pessoal <b>${eur(R.pessoal)}</b>.`);q('mpt',`Margem bruta ponderada: <b>${pc(R.mp)}</b>`);
+q('p1c',`Custo mensal por comercial: <b>${eur(R.cm)}</b> (sem comissões) + entrada única <b>${eur(R.ce)}</b>. Produtividade de referência: ${eur(prodRef(S.P))}/mês.`);
+[['p1r',0],['p2r',1],['p3r',2]].forEach(([id,i])=>{const l=R.L[i];q(id,`<div class="cards">${kp('Faturação incremental',eur(l.fat))+kp('Custos incrementais',eur(l.c))+kp('Margem incremental',eur(l.mb))+kp('Resultado incremental',eur(l.res))+(i<2?kp('Valor a 24 meses',eur(l.v24)):kp('Desconto concedido',eur(l.ds))+kp('Efeito ano seguinte',eur(-l.nx)))}</div>`+R.warn.filter(w=>i==2).map(w=>`<div class="w">${w}</div>`).join(''))});
+if($('rc')){const f=R.F;q('rc',`<h3 class="${I.ok?'ok':'ko'}">${I.ok?'Meta atingida':'Meta não atingida'} — ${pc(I.pm)} da meta</h3>${R.warn.map(w=>`<div class="w">${w}</div>`).join('')}<div class="cards">${indic(I,R)}</div><small>Pressuposto: efeitos de P1, P2 e P3 somados (aditividade).</small>`);
+const sim=f.map((v,i)=>v+R.L[0].f[i]+R.L[1].f[i]+R.L[2].f[i]),H=S.hist;
+q('ch',chart([{n:'Real '+S.ab,v:H.base,c:'#8a8f98'},{n:'Real '+S.am,v:H.base.map((_,i)=>i<R.nr?H.meta[i]:null),c:'#2b6cb0'},{n:'Cenário base',v:f,c:'#c9a227',d:1},{n:'Cenário simulado',v:sim,c:'#2f7d4f'},{n:'Meta mensal',v:H.base.map(v=>v*(1+S.meta)),c:'#b3372d',d:1}]));
+q('rt',tbl(['Mês','Base','P1','P2','P3','Simulado','Necessário'],MES.map((m,i)=>[m,eur(f[i]),eur(R.L[0].f[i]),eur(R.L[1].f[i]),eur(R.L[2].f[i]),eur(sim[i]),R.need[i]?eur(R.need[i]):'—'])))}
+if($('cmp'))cmpR();
+if($('orig')){const rows=Object.keys(S.P).map(k=>{const ch=String(S.P[k])!=String(DEF.P[k]),e=EST[k];return[k,String(+(+S.P[k]||0).toFixed(4)),ch?'Alteração da equipa':'Excel',e!=null?String(e):'—']});q('orig',tbl(['Parâmetro','Valor atual','Origem','Estimativa dos dados'],rows)+'<small>Estimativas (Etapa 3): compra média 554 €/mês (37 clientes), retenção 84,6% (26 clientes), elasticidade 1,99 (Verão Solar 2025), antecipação 18,6% (um só caso: pouco fiável).</small>')}extRefresh()}
+function cmpR(){if(!SAVED.length){$('cmp').innerHTML='Ainda sem cenários guardados.';return}const rs=SAVED.map(s=>calc(s.S,s.C)),rw=[['Faturação '+S.am,r=>eur(r.I.fm)],['Meta',r=>r.I.ok?'Atingida':'Não atingida ('+pc(r.I.pm)+')'],['Distância à meta',r=>eur(r.I.dist)],['Faturação incremental',r=>eur(r.I.inc)],['Custos incrementais',r=>eur(r.I.cost)],['Desconto concedido',r=>eur(r.I.ds)],['Margem incremental',r=>eur(r.I.mb)],['Resultado incremental',r=>eur(r.I.res)],['ROI',r=>num(r.I.roi)],['Custo por € adicional',r=>num(r.I.cpe)],['Valor a 24 meses',r=>eur(r.I.v24)],['Efeito ano seguinte',r=>eur(-r.I.nx)],['Resultado operacional c/ medidas',r=>eur(r.op)],['Resultado operacional s/ medidas',r=>eur(r.opB)]];
+$('cmp').innerHTML=tbl(['Indicador',...SAVED.map((s,i)=>s.name+` <button class="b s" data-x="del${i}">✕</button>`)],rw.map(([l,f])=>[l,...rs.map(f)]))}
+function ld(){return new Promise((ok,ko)=>{if(window.XLSX)return ok();const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=ok;s.onerror=()=>ko('Não foi possível carregar a biblioteca SheetJS (o ambiente pode bloquear scripts externos). Use «Importar configuração».');document.head.appendChild(s)})}
+const MAP={SAL:'FV_SAL_BASE',COM:'FV_COMISSAO',VIA:'FV_VIATURA',AJU:'FV_AJUDAS',CMU:'FV_COMUNIC',REC:'FV_RECRUT',FOR:'FV_FORMACAO',EQP:'FV_EQUIP',CAN:'FV_CANIB',NPAG:'N_PAG',TSU:'TSU_EP',SEG:'SEG_AT',SUB:'SUB_ALIM_DIA',DIAS:'DIAS_UTEIS_ANO',CN:'MKT_COMPRA_NOVO',RET:'MKT_RETENCAO_6M',DEC:'MKT_REND_DECR',EL:'PRM_ELAST',ANT:'PRM_ANTECIP',CFX:'PRM_CUSTO_FIXO',DMAX:'PRM_DESC_MAX',REN:'CF_RENDAS',ENE:'CF_ENERGIA',COMUN:'CF_COMUNIC',SEG2:'CF_SEGUROS',OUT:'CF_OUTROS',FROTA:'CF_FROTA_LOG',TR:'TRANSP_PCT',PMR:'PMR',PC06:'FV_PROD_C06',PEXP:'FV_PROD_EXPERIENTE'},TOP={nome:'EMP_NOME',setor:'EMP_SETOR',sede:'EMP_SEDE',equipa:'EMP_EQUIPA',ab:'ANO_BASE',am:'ANO_META',meta:'META_CRESC',mi:'MES_INICIO'};
+async function impX(f){const msg=$('msg');try{await ld();const wb=XLSX.read(await f.arrayBuffer()),sh=n=>{if(!wb.Sheets[n])throw'Falta a folha '+n;return wb.Sheets[n]},rw=n=>XLSX.utils.sheet_to_json(sh(n),{header:1}),ob=n=>XLSX.utils.sheet_to_json(sh(n));
+const N=clone(S),c={};rw('Configuracao').forEach(r=>{if(typeof r[0]=='string')c[r[0]]=r});
+for(const k in TOP)if(c[TOP[k]]&&c[TOP[k]][2]!=null&&c[TOP[k]][2]!=='[preencher]')N[k]=c[TOP[k]][2];for(const k in MAP)if(typeof(c[MAP[k]]||[])[2]=='number')N.P[k]=c[MAP[k]][2];
+const rhs=Object.keys(c).filter(k=>/^RH_/.test(k)&&k!='RH_TOTAL');if(rhs.length)N.rh=rhs.map(k=>({d:c[k][1],n:c[k][2],s:c[k][3],auto:k=='RH_FV'}));
+N.ramp=N.ramp.map((_,i)=>c['FV_RAMPA_'+(i+1)]?c['FV_RAMPA_'+(i+1)][2]:N.ramp[i]);const mk=Object.keys(c).filter(k=>/^MKT_/.test(k)&&typeof c[k][6]=='number');if(mk.length)N.canais=mk.map(k=>({n:c[k][1],cpl:c[k][6],conv:c[k][7],orc:c[k][9],desf:c[k][10]}));
+const pr=c.FV_PROD_REF?c.FV_PROD_REF[2]:N.P.PC06;N.P.REF=Math.abs(pr-N.P.PC06)<1?'c06':'man';N.P.PMAN=pr;
+const E=ob('Encomendas'),h={};E.forEach(r=>{const a=r['Ano'],m=r['Mês'];(h[a]=h[a]||Z())[m-1]+=r['Valor líquido (€, sem IVA)']||0});
+if(!h[N.ab]||!h[N.am])throw'Faltam dados de '+N.ab+' ou '+N.am;let n=0;h[N.am].forEach((v,i)=>{if(v>0)n=i+1});N.hist={base:h[N.ab].map(v=>+v.toFixed(2)),meta:h[N.am].slice(0,n).map(v=>+v.toFixed(2))};N.manual=false;
+const cat={},cmm={};ob('Linhas_Encomenda').forEach(r=>{if(r['Ano']!=N.ab)return;const k=r['Categoria'];cat[k]=cat[k]||[0,0];cat[k][0]+=r['Valor líquido (€, sem IVA)'];cat[k][1]+=r['Custo total (€)'];(cmm[k]=cmm[k]||Z())[r['Mês']-1]+=r['Valor líquido (€, sem IVA)']});
+const ks=Object.keys(cat),tot=sum(ks.map(k=>cat[k][0])),mt=Z();ks.forEach(k=>cmm[k].forEach((v,i)=>mt[i]+=v));N.cats=ks.map(k=>({n:k,m:+(1-cat[k][1]/cat[k][0]).toFixed(4),w:+(cat[k][0]/tot).toFixed(5)}));N.share=ks.map(k=>cmm[k].map((v,i)=>mt[i]?v/mt[i]:0));
+const cv=ob('Comerciais');if(cv.length)N.com=cv.map(r=>{const kf=Object.keys(r),km=kf.find(k=>k.startsWith('Faturação média mensal')),ka=kf.find(k=>k=='Faturação '+N.ab+' (€)'),md=r[km]||0;return{c:r['Código'],sal:r['Salário base mensal (€)'],com:r['Comissão sobre vendas (%)'],via:r['Viatura e combustível (€/mês)'],fat:+md.toFixed(2),m:md?Math.round(r[ka]/md):12}});
+const cx=ob('Campanhas_Marketing'),yr={};cx.forEach(r=>{const y=2000+parseInt(String(r['Código campanha']).slice(3,5));yr[y]=(yr[y]||0)+r['Investimento (€)']});const ys=Object.keys(yr).filter(y=>y<N.am);if(ys.length)N.P.MKTC=sum(ys.map(y=>yr[y]))/ys.length;
+const ex=N.com.filter(x=>/^C0[1-5]$/.test(x.c));if(ex.length)N.P.PEXP=sum(ex.map(x=>x.fat))/ex.length;
+snap('Importar Excel atualizado');S=N;S.mi=Math.max(S.mi,S.hist.meta.length+1);C=newC(S.mi);renderAll();$('msg').innerHTML='<div class="w">Excel importado: '+E.length+' encomendas, '+ks.length+' categorias, ano base '+S.ab+', meta '+S.am+'.</div>'}catch(e){msg.innerHTML='<div class="w">'+(e.message||e)+'</div>'}}
+function impJ(t){try{const o=JSON.parse(t);snap('Importar base de dados (.json)');S=Object.assign(clone(DEF),o.S||o);C=o.C||newC(S.mi);renderAll();$('msg').innerHTML='<div class="w">Base de dados importada.</div>'}catch(e){$('msg').innerHTML='<div class="w">JSON inválido.</div>'}}
+document.addEventListener('input',e=>{const t=e.target,p=t.dataset.p;if(t.dataset.k){const a=get(t.dataset.k),i=+t.dataset.i;const k=a.indexOf(i);snapK(t.dataset.k,i,t.checked);if(t.checked&&k<0)a.push(i);if(!t.checked&&k>=0)a.splice(k,1);return refresh()}
+if(!p)return;let v=t.type=='checkbox'?t.checked:((t.type=='number'||t.type=='range')?(parseFloat(t.value)||0):t.value);if(t.dataset.n)v=+t.value;if(t.dataset.pc)v/=100;if(t.type=='checkbox'&&p=='S.P.SAZ')v=t.checked?1:0;
+logChange(p,p=='S.nmeta'?S.hist.meta.length:get(p),v,t);
+if(p=='S.nmeta'){const n=Math.min(11,Math.max(0,v));S.hist.meta=Array.from({length:n},(_,i)=>S.hist.meta[i]||0);S.mi=Math.max(S.mi,n+1);return renderAll()}
+set(p,v);if(t.dataset.r)return renderAll();refresh()});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-t],[data-x]');if(!t)return;if(t.dataset.t){tab=t.dataset.t;return renderAll()}const x=t.dataset.x;
+if(extClick(x,t))return;
+if(x=='tologin'){VIEW='login';return renderTop()}if(x=='dologin')return doLogin();if(x=='logout')return logout();if(x=='report')return printReport();
+if(x=='cloudsave')return cloudSave();if(x=='cloudload')return cloudLoad();
+if(/^(addrh|rh\d|addcom|com\d|reset|pre)/.test(x))snap(actName(x));
+if(x=='addrh')S.rh.push({d:'Novo departamento',n:1,s:1000});else if(/^rh\d/.test(x))S.rh.splice(+x.slice(2),1);else if(x=='addcom')S.com.push({c:'C'+(S.com.length+1),sal:1250,com:.03,via:620,fat:15000,m:12});else if(/^com\d/.test(x))S.com.splice(+x.slice(3),1);
+else if(x=='reset'){S=clone(DEF);C=newC(S.mi)}else if(x=='exp'){const j=JSON.stringify({S,C},null,1);$('ta').value=j;saveFile('base_dados_'+S.nome.replace(/\W+/g,'_')+'.json',j);return}
+else if(x=='cp'){$('ta').select();try{document.execCommand('copy')}catch(_){}return}else if(x=='impc')return $('f1').click();else if(x=='impx')return $('f2').click();else if(x=='impt')return impJ($('ta').value);
+else if(x=='save'){if(SAVED.length>=4){alert('Máximo de 4 cenários.');return}SAVED.push({name:$('sn').value,S:clone(S),C:clone(C)})}else if(/^del/.test(x))SAVED.splice(+x.slice(3),1);else if(/^pre/.test(x)){S=clone(DEF.mi?S:S);C=preset(S,x[3])}
+renderAll()});
+document.addEventListener('change',e=>{const t=e.target;if(t.id=='f1'&&t.files[0])t.files[0].text().then(impJ);if(t.id=='f2'&&t.files[0])impX(t.files[0])});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&(e.target.id=='lp'||e.target.id=='lu'))doLogin();
+const tg=e.target,txt=tg.tagName=='TEXTAREA'||(tg.tagName=='INPUT'&&/^(text|email|password|search)$/.test(tg.type));
+if(VIEW=='app'&&(e.ctrlKey||e.metaKey)&&!txt){const k=e.key.toLowerCase();if(k=='z'&&!e.shiftKey){e.preventDefault();undo()}else if(k=='y'||(k=='z'&&e.shiftKey)){e.preventDefault();redo()}}});
+//#APOIO_DECISAO — funcionalidades de apoio à decisão (não alteram o modelo de cálculo)
+const escH=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const kE=v=>{const a=Math.abs(v),s=v<0?'−':'';return a>=1e6?s+(a/1e6).toFixed(2).replace('.',',')+' M€':s+Math.round(a/1000).toLocaleString('pt-PT')+' k€'};
+const sgn=d=>d>0?'+':'',tick=()=>new Promise(r=>setTimeout(r,0)),who=()=>AUTH.cur?AUTH.cur.u:'—';
+const NIVEL={erro:'Crítico',aviso:'Atenção',ok:'OK',info:'Info'};
+
+// ---------- Pesos da qualidade da proposta ----------
+function qw(){const w=S.QW||DEF.QW,a=+w.meta||0,b=+w.roi||0,c=+w.op||0,t=a+b+c;return t?{meta:a/t,roi:b/t,op:c/t}:{meta:1/3,roi:1/3,op:1/3}}
+
+// ---------- Histórico e anular/refazer ----------
+let UNDO=[],REDO=[];
+function snap(desc,path){UNDO.push({S:clone(S),C:clone(C),desc,path:path||null,t:Date.now(),u:who(),tab:TABS[tab]?TABS[tab][0]:''});if(UNDO.length>100)UNDO.shift();REDO=[]}
+function fv(x,p,isPc){if(x==null||x==='')return'—';if(typeof x=='boolean')return x?'sim':'não';
+if(p&&/^C\.p\d\.\d+\.(h|t|m)$/.test(p))return MES[x-1]||x;if(p&&/^C\.p2\.\d+\.c$/.test(p))return(S.canais[x]||{}).n||x;
+if(typeof x=='number')return isPc?pc(x):(+x.toFixed(4)).toLocaleString('pt-PT');return String(x)}
+function fieldName(p,t){const l=t.closest('label');if(l&&l.firstChild&&l.firstChild.nodeType==3&&l.firstChild.textContent.trim())return l.firstChild.textContent.trim();
+const td=t.closest('td'),tr=t.closest('tr'),tb=t.closest('table');if(td&&tr&&tb){const first=tr.cells[0],th=tb.rows[0].cells[td.cellIndex];const rn=first&&first!=td?(first.textContent.trim()||(first.querySelector('input')||{}).value||''):'';return(rn?rn+' — ':'')+(th?th.textContent.trim():p)}return p}
+function logChange(p,old,nv,t){if(p[0]=='U'||old===nv)return;const L=UNDO[UNDO.length-1],now=Date.now(),isPc=!!t.dataset.pc,nm=fieldName(p,t);
+if(L&&L.path==p&&now-L.t<2500){L.t=now;L.desc=nm+': '+fv(L.old,p,isPc)+' → '+fv(nv,p,isPc);REDO=[];return}
+snap(nm+': '+fv(old,p,isPc)+' → '+fv(nv,p,isPc),p);UNDO[UNDO.length-1].old=old}
+function snapK(path,i,on){const n=path.split('.')[2];snap('Promoção '+(+n+1)+': categoria «'+S.cats[i].n+'» '+(on?'incluída':'retirada'))}
+function actName(x){if(x=='addrh')return'Adicionar departamento';if(/^rh\d/.test(x))return'Remover departamento «'+(S.rh[+x.slice(2)]||{}).d+'»';
+if(x=='addcom')return'Adicionar comercial';if(/^com\d/.test(x))return'Remover comercial '+(S.com[+x.slice(3)]||{}).c;if(x=='reset')return'Repor valores do Excel';return'Aplicar teste '+x.slice(3)}
+function undoStep(){const e=UNDO.pop();if(!e)return false;REDO.push(Object.assign({},e,{S:clone(S),C:clone(C)}));S=e.S;C=e.C;return true}
+function undo(){if(undoStep())renderAll()}
+function redo(){const e=REDO.pop();if(!e)return;UNDO.push(Object.assign({},e,{S:clone(S),C:clone(C)}));S=e.S;C=e.C;renderAll()}
+function goTo(i){while(UNDO.length>i)undoStep();renderAll()}
+function histHTML(){return`<div class="card"><h3>Histórico de alterações</h3><p><button class="b s" data-x="undo">↶ Anular</button><button class="b s" data-x="redo">↷ Refazer</button> <small>Atalhos: Ctrl+Z e Ctrl+Y (fora das caixas de texto). Regista as últimas 100 alterações desta sessão; alterações seguidas ao mesmo campo contam como uma só.</small></p><div id="histl"></div></div>`}
+function histTable(){if(!UNDO.length&&!REDO.length)return'<p><small>Ainda não há alterações nesta sessão.</small></p>';const hr=t=>new Date(t).toLocaleTimeString('pt-PT');
+let h=UNDO.length?tbl(['#','Hora','Utilizador','Separador','Alteração',''],UNDO.map((e,i)=>[i+1,hr(e.t),escH(e.u),escH(e.tab),escH(e.desc),`<button class="b s" data-x="hgo${i}">Voltar a antes desta</button>`]).reverse()):'';
+if(REDO.length)h+='<h3>Alterações anuladas (podem ser refeitas)</h3>'+tbl(['Hora','Alteração'],REDO.slice().reverse().map(e=>[hr(e.t),'<span style="color:var(--m)">'+escH(e.desc)+'</span>']));return h.split('<table>').join('<table class="tl">')}
+
+// ---------- Painel de alertas (semáforos) ----------
+function alertas(r,incWarn){const I=r.I,T=S.TH||DEF.TH,a=[],add=(nivel,txt)=>a.push({nivel,txt}),has=I.inc||I.cost||I.ds;
+if(I.ok)add('ok','Meta atingida: '+pc(I.pm)+' da meta.');else if(I.pm>=T.pm)add('aviso','Meta quase atingida: '+pc(I.pm)+' — faltam '+eur(I.dist)+'.');else add('erro','Meta longe de ser atingida: '+pc(I.pm)+' — faltam '+eur(I.dist)+'.');
+if(!has){add('info','Ainda não há medidas definidas (separadores P1, P2 e P3).');return a}
+if(I.roi<T.roi)add('erro','ROI das medidas ('+num(I.roi)+') abaixo do mínimo definido ('+num(T.roi)+').');else add('ok','ROI das medidas ('+num(I.roi)+') dentro do limite.');
+if(I.cpe>T.cpe)add('erro','Cada € de faturação adicional custa '+num(I.cpe)+' € (máximo: '+num(T.cpe)+' €).');else if(I.cpe>T.cpe*.8)add('aviso','Custo por € adicional ('+num(I.cpe)+') perto do máximo ('+num(T.cpe)+').');
+if(I.res<0)add('aviso','As medidas reduzem o resultado operacional em '+eur(-I.res)+' (de '+eur(r.opB)+' para '+eur(r.op)+').');else add('ok','As medidas melhoram o resultado operacional em '+eur(I.res)+'.');
+if(r.op<0)add('erro','Resultado operacional com medidas negativo ('+eur(r.op)+').');
+['P1 (força de vendas)','P2 (marketing)'].forEach((n,i)=>{const l=r.L[i];if(l.fat>0&&l.res<0)add(l.v24>0?'info':'aviso',n+': resultado negativo no ano ('+eur(l.res)+'), '+(l.v24>0?'mas positivo a 24 meses ('+eur(l.v24)+').':'e também a 24 meses ('+eur(l.v24)+').'))});
+if(r.L[2].ds>0&&r.L[2].res<0)add('aviso','P3 (promoções): o desconto concedido ('+eur(r.L[2].ds)+') não é compensado — resultado '+eur(r.L[2].res)+'.');
+if(I.nx>0)add('info','As promoções retiram cerca de '+eur(I.nx)+' ao início do ano seguinte (antecipação de compras).');
+if(incWarn)r.warn.forEach(w=>add('aviso',w));return a}
+function semaf(r){const I=r.I,T=S.TH||DEF.TH,has=I.inc||I.cost||I.ds,q=quality(r),t=(l,v,st)=>`<div class="k s-${st}"><span>${l}</span><b>${v}</b></div>`;
+return t('Cumprimento da meta',pc(I.pm),I.ok?'ok':I.pm>=T.pm?'av':'er')+t('ROI das medidas',has?num(I.roi):'—',!has?'na':I.roi>=T.roi?'ok':I.roi>=T.roi-.25?'av':'er')+t('Custo por € adicional',has?num(I.cpe):'—',!has?'na':I.cpe<=T.cpe*.8?'ok':I.cpe<=T.cpe?'av':'er')+t('Resultado incremental',eur(I.res),!has?'na':I.res>=0?'ok':I.res>-.1*Math.abs(r.opB)?'av':'er')+t('Resultado operacional',eur(r.op),r.op<0?'er':r.op<r.opB?'av':'ok')+t('Qualidade da proposta',q.label+' ('+Math.round(q.score)+')',q.score>=70?'ok':q.score>=40?'av':'er')}
+
+// ---------- Gráfico em cascata (ponte) ----------
+function cascata(items,zoom){const W=720,H=290,pL=8,pR=8,pT=22,pB=46,n=items.length,bw=(W-pL-pR)/n;let run=0;
+const B=items.map(it=>{let a,b;if(it.tot){a=0;b=it.v;run=it.v}else{a=run;b=run+it.v;run=b}return Object.assign({},it,{a,b})});
+let lo=zoom?Math.min(...B.map(x=>x.tot?x.b:Math.min(x.a,x.b)))*.96:Math.min(0,...B.map(x=>Math.min(x.a,x.b))),hi=Math.max(0,...B.map(x=>Math.max(x.a,x.b)));const pad=(hi-lo)*.08||1;hi+=pad;if(lo<0&&!zoom)lo-=pad;
+const Y=v=>pT+(hi-v)/(hi-lo)*(H-pT-pB);let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:880px;height:auto;display:block;margin:auto">`;
+if(!zoom&&lo<0)s+=`<line x1="0" x2="${W}" y1="${Y(0)}" y2="${Y(0)}" stroke="#888" />`;
+B.forEach((x,i)=>{const x0=pL+i*bw+bw*.18,w=bw*.64,a=x.tot&&zoom?lo:x.a,y1=Y(Math.max(a,x.b)),y2=Y(Math.min(a,x.b)),col=x.c||(x.tot?'#6b7280':x.v>=0?'#2f7d4f':'#b3372d');
+s+=`<rect x="${x0}" y="${y1}" width="${w}" height="${Math.max(1.5,y2-y1)}" fill="${col}" rx="2"><title>${escH(x.n.replace('\n',' '))}: ${eur(x.v)}</title></rect>`;
+if(i<n-1)s+=`<line x1="${x0+w}" x2="${x0+bw}" y1="${Y(x.b)}" y2="${Y(x.b)}" stroke="#888" stroke-dasharray="3 3"/>`;
+s+=`<text x="${x0+w/2}" y="${y1-5}" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">${x.tot?kE(x.v):sgn(x.v)+kE(x.v)}</text>`;
+x.n.split('\n').forEach((t,j)=>s+=`<text x="${x0+w/2}" y="${H-pB+16+j*13}" text-anchor="middle" font-size="11" fill="currentColor">${escH(t)}</text>`)});
+if(zoom)s+=`<text x="${W-4}" y="${H-2}" text-anchor="end" font-size="9" fill="#888">Eixo vertical não começa em zero</text>`;return s+'</svg>'}
+const fatItems=r=>[{n:'Cenário\nbase',v:r.Fs,tot:1},{n:'P1\nForça de vendas',v:r.L[0].fat},{n:'P2\nMarketing',v:r.L[1].fat},{n:'P3\nPromoções',v:r.L[2].fat},{n:'Faturação\nsimulada',v:r.I.fm,tot:1,c:'#2b6cb0'},{n:r.I.fm<r.tg?'Falta para\na meta':'Acima\nda meta',v:r.tg-r.I.fm,c:'#d39b00'},{n:'Meta\n'+S.am,v:r.tg,tot:1,c:'#b3372d'}];
+const resItems=r=>[{n:'Sem\nmedidas',v:r.opB,tot:1},{n:'P1\nForça de vendas',v:r.L[0].res},{n:'P2\nMarketing',v:r.L[1].res},{n:'P3\nPromoções',v:r.L[2].res},{n:'Com\nmedidas',v:r.op,tot:1,c:'#2b6cb0'}];
+
+// ---------- Calendário das medidas ----------
+function calHTML(){return`<div class="card"><h3>Calendário das medidas — ${S.am}</h3><p><small>Linha temporal das medidas definidas em P1, P2 e P3. Passe o rato por cima de cada célula para ver o detalhe. A última linha compara a faturação simulada com a meta de cada mês.</small></p><div id="calg"></div>
+<p class="leg"><span><b style="background:#2b6cb0"></b>Entrada de comerciais</span><span><b style="background:#2b6cb030"></b>Rampa de produtividade</span><span><b style="background:#b4622d"></b>Investimento em campanha</span><span><b style="background:#b4622d30"></b>Novos clientes a comprar</span><span><b style="background:#7b3fa0"></b>Promoção</span><span><b class="e3l"></b>Antecipação (quebra)</span><span><b class="real"></b>Meses já reais</span></p></div>`}
+function calTable(r){r=r||calc(S,C);const nr=r.nr,mi=r.mi,rows=[],cell=(c,t,ti)=>({c,t,ti}),mk=l=>({l,c:Array(12).fill(null)});
+C.p1.forEach((v,i)=>{if(!(v.n>0))return;const h=Math.max(v.h,mi),o=mk(`P1 · Vaga ${i+1}: ${v.n} comercia${v.n>1?'is':'l'}`);for(let m=h;m<=12;m++){const k=m-h,rp=Math.round(S.ramp[Math.min(k,9)]*100)+'%';o.c[m-1]=k?cell('e1l',rp,'Rampa: '+rp+' da produtividade de referência'):cell('e1','Entrada · '+rp,'Entrada: recrutamento, formação e equipamento ('+eur(v.n*r.ce)+')')}rows.push(o)});
+C.p2.forEach(v=>{const k=S.canais[v.c];if(!k||!(v.B>0))return;const t=Math.max(v.t,mi),s=t+k.desf,o=mk('P2 · '+k.n);for(let m=s;m<=12;m++)o.c[m-1]=cell('e2l','compras','Novos clientes a comprar ('+(m-s<6?'primeiros 6 meses':'após retenção')+')');o.c[t-1]=cell('e2',kE(v.B),'Investimento na campanha: '+eur(v.B)+(k.desf?' · os clientes começam a comprar '+k.desf+' mês depois':''));rows.push(o)});
+C.p3.forEach((v,i)=>{if(!(v.d>0)||!v.K.length)return;const o=mk(`P3 · Promoção ${i+1}: ${v.K.length==S.cats.length?'todas as categorias':v.K.length+' categoria'+(v.K.length>1?'s':'')}`);let last=0;for(let j=0;j<v.len;j++){const m=v.m+j;if(m>12)break;if(m<mi)continue;o.c[m-1]=cell('e3','−'+Math.round(v.d*100)+'%',v.K.map(x=>S.cats[x].n).join(', '));last=m}if(last&&last<12)o.c[last]=cell('e3l','antecip.','Antecipação: −'+pc(S.P.ANT,0)+' nas vendas destas categorias');rows.push(o)});
+if(!rows.length)return'<p><small>Ainda não há medidas definidas. Configure-as nos separadores P1, P2 e P3.</small></p>';
+const sim=r.F.map((v,i)=>v+r.L[0].f[i]+r.L[1].f[i]+r.L[2].f[i]);
+let h='<div class="sc"><table class="cal"><tr><th>Medida</th>'+MES.map((m,i)=>`<th class="${i<nr?'real':''}">${m}${i<nr?'<br><small>real</small>':''}</th>`).join('')+'</tr>';
+rows.forEach(o=>{h+=`<tr><td>${escH(o.l)}</td>`+o.c.map((c,i)=>c?`<td class="${c.c}" title="${escH(c.ti)}">${escH(c.t)}</td>`:`<td class="${i<nr?'real':''}"></td>`).join('')+'</tr>'});
+return h+'<tr><td><b>Simulado ÷ meta mensal</b></td>'+sim.map((v,i)=>{const x=v/(S.hist.base[i]*(1+S.meta));return`<td class="${i<nr?'real ':''}${x>=1?'ok':'ko'}">${pc(x,0)}</td>`}).join('')+'</tr></table></div>'}
+
+// ---------- Análise de sensibilidade (tornado) ----------
+const SENS=[
+['PROD','Produtividade do novo comercial',(s,f)=>{s.P.PC06*=f;s.P.PEXP*=f;s.P.PMAN*=f}],['RAMP','Curva de rampa',(s,f)=>{s.ramp=s.ramp.map(x=>x*f)}],
+['CAN','Canibalização',(s,f)=>{s.P.CAN*=f}],['SAL','Salário do novo comercial',(s,f)=>{s.P.SAL*=f}],['COM','Comissão do novo comercial',(s,f)=>{s.P.COM*=f}],
+['CN','Compra média do novo cliente',(s,f)=>{s.P.CN*=f}],['RET','Retenção a 6 meses',(s,f)=>{s.P.RET=Math.min(1,s.P.RET*f)}],['CONV','Taxa de conversão dos canais',(s,f)=>s.canais.forEach(c=>c.conv*=f)],
+['CPL','Custo por lead (CPL)',(s,f)=>s.canais.forEach(c=>c.cpl*=f)],['DEC','Rendimentos decrescentes',(s,f)=>{s.P.DEC*=f}],
+['EL','Elasticidade das promoções',(s,f)=>{s.P.EL*=f}],['ANT','Antecipação de compras',(s,f)=>{s.P.ANT*=f}],['CFX','Custo fixo por promoção',(s,f)=>{s.P.CFX*=f}],
+['MARG','Margens brutas das categorias',(s,f)=>s.cats.forEach(c=>c.m=Math.min(.99,c.m*f))],['TR','Transportes (% da faturação)',(s,f)=>{s.P.TR*=f}],
+['CF','Custos fixos mensais',(s,f)=>['REN','ENE','COMUN','SEG2','OUT','FROTA'].forEach(k=>s.P[k]*=f)],['PES','Salários da equipa atual',(s,f)=>{s.rh.forEach(r=>r.s*=f);s.com.forEach(c=>c.sal*=f)}]];
+const SFN=Object.fromEntries(SENS.map(x=>[x[0],x[2]])),SNM=Object.fromEntries(SENS.map(x=>[x[0],x[1]]));
+const IND={op:['Resultado operacional com medidas',r=>r.op,eur,d=>sgn(d)+eur(d)],res:['Resultado incremental das medidas',r=>r.I.res,eur,d=>sgn(d)+eur(d)],fm:['Faturação do ano',r=>r.I.fm,eur,d=>sgn(d)+eur(d)],pm:['Cumprimento da meta',r=>r.I.pm,pc,d=>sgn(d)+num(d*100,1)+' p.p.'],roi:['ROI das medidas',r=>r.I.roi,num,d=>sgn(d)+num(d)]};
+const indSel=p=>`<select data-p="${p}">${Object.keys(IND).map(k=>`<option value="${k}" ${get(p)==k?'selected':''}>${IND[k][0]}</option>`).join('')}</select>`;
+function sensRun(){const f=Math.min(.9,Math.max(.001,+U.sv||.1)),ind=IND[U.si]||IND.op,g=ind[1],v0=g(calc(clone(S),C));
+const rows=SENS.map(([k,n,fn])=>{const run=m=>{const s=clone(S);fn(s,m);return g(calc(s,C))},l=run(1-f),h=run(1+f);return{k,n,l,h,dl:l-v0,dh:h-v0,amp:Math.abs(h-l)}});
+const eps=Math.abs(v0)*1e-9+1e-9;return{v0,ind,f,rows:rows.filter(r=>r.amp>eps).sort((a,b)=>b.amp-a.amp),zero:rows.filter(r=>r.amp<=eps)}}
+function tornado(z){const rows=z.rows;if(!rows.length)return'<p><small>Nenhum parâmetro altera este indicador no cenário atual.</small></p>';
+const W=720,lw=230,rh=26,pT=26,H=pT+rows.length*rh+8,cx=lw+(W-lw)/2,half=(W-lw)/2-70,mx=Math.max(...rows.map(r=>Math.max(Math.abs(r.dl),Math.abs(r.dh))))||1,X=d=>cx+d/mx*half,fd=z.ind[3];
+let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:880px;height:auto;display:block;margin:auto"><text x="${cx}" y="14" text-anchor="middle" font-size="11" fill="currentColor">Valor no cenário atual: ${z.ind[2](z.v0)}</text><line x1="${cx}" x2="${cx}" y1="${pT-6}" y2="${H}" stroke="#888"/>`;
+rows.forEach((r,i)=>{const y=pT+i*rh;s+=`<text x="${lw-8}" y="${y+17}" text-anchor="end" font-size="11" fill="currentColor">${escH(r.n)}</text>`;
+[[r.dl,'#2b6cb0',r.l],[r.dh,'#b4622d',r.h]].sort((a,b)=>Math.abs(b[0])-Math.abs(a[0])).forEach(([d,c,v])=>{const x=X(d);s+=`<rect x="${Math.min(cx,x)}" y="${y+4}" width="${Math.max(1,Math.abs(x-cx))}" height="${rh-8}" fill="${c}" opacity=".85"><title>${escH(r.n)}: ${z.ind[2](v)} (${fd(d)})</title></rect><text x="${x+(d>=0?4:-4)}" y="${y+17}" text-anchor="${d>=0?'start':'end'}" font-size="10" fill="currentColor">${fd(d)}</text>`})});
+return s+`</svg><div class="leg"><span><b style="background:#2b6cb0"></b>Parâmetro −${pc(z.f,0)}</span><span><b style="background:#b4622d"></b>Parâmetro +${pc(z.f,0)}</span></div>`}
+
+// ---------- Simulação de Monte Carlo ----------
+const UNC_K=['PROD','RAMP','CAN','CN','RET','CONV','CPL','EL','ANT','MARG'];let MC=null,MCBUSY=0;
+function tri(r){const u=Math.random();return u<.5?1-r+Math.sqrt(u*2*r*r):1+r-Math.sqrt((1-u)*2*r*r)}
+function riskHTML(){return`<div class="card"><h3>Análise de sensibilidade</h3><p><small>Cada parâmetro varia para cima e para baixo, um de cada vez, mantendo os restantes. As barras mostram o efeito no indicador escolhido para o cenário atual: os parâmetros no topo são aqueles de que a decisão mais depende.</small></p>
+<div class="g"><label>Indicador${indSel('U.si')}</label>${fl('Variação de cada parâmetro (±%)','U.sv',{pc:1,min:1,max:90})}</div><div id="tor"></div><div id="tort"></div></div>
+<div class="card"><h3>Simulação de Monte Carlo</h3><p><small>Os parâmetros incertos deixam de ter um valor fixo: em cada simulação é sorteado um valor dentro do intervalo indicado (distribuição triangular, mais provável no valor atual). O modelo é calculado centenas de vezes e obtém-se a probabilidade de cada resultado.</small></p>
+${tbl(['Parâmetro incerto','Valor atual','Incerteza (±%)'],UNC_K.map(k=>[SNM[k],uncVal(k),I('S.UNC.'+k,{pc:1,min:0,max:90})]))}
+<div class="g" style="margin-top:8px"><label>N.º de simulações<select data-p="U.mcN" data-n=1>${[500,1000,2000,5000].map(n=>`<option value=${n} ${U.mcN==n?'selected':''}>${n}</option>`).join('')}</select></label><label>Indicador do histograma${indSel('U.mcI')}</label></div>
+<button class="b" data-x="mcrun">▶ Correr simulação</button><div id="mcres"></div></div>`}
+function uncVal(k){const P=S.P;return{PROD:eur(prodRef(P))+'/mês',RAMP:'curva de 10 meses',CAN:pc(P.CAN),CN:eur(P.CN)+'/mês',RET:pc(P.RET),CONV:'por canal',CPL:'por canal',EL:num(P.EL),ANT:pc(P.ANT),MARG:'por categoria'}[k]}
+async function mcRun(){if(MCBUSY)return;MCBUSY=1;const N=+U.mcN||1000,el=$('mcres'),o={fm:[],res:[],op:[],pm:[],roi:[]},UN=Object.assign({},DEF.UNC,S.UNC);let ok=0,pos=0;
+try{for(let i=0;i<N;i++){const s=clone(S);UNC_K.forEach(k=>{const r=+UN[k]||0;if(r>0)SFN[k](s,Math.max(0,tri(Math.min(r,.95))))});const q=calc(s,C);
+o.fm.push(q.I.fm);o.res.push(q.I.res);o.op.push(q.op);o.pm.push(q.I.pm);o.roi.push(q.I.roi);if(q.I.ok)ok++;if(q.I.res>0)pos++;
+if(i%250==249){const e=$('mcres');if(e)e.innerHTML=`<div class="w">A simular… ${i+1} de ${N}</div>`;await tick()}}
+const b=calc(clone(S),C);MC={N,o,pOk:ok/N,pRes:pos/N,pOp:o.op.filter(v=>v>0).length/N,base:{fm:b.I.fm,res:b.I.res,op:b.op,pm:b.I.pm,roi:b.I.roi},tg:b.tg,t:new Date(),desc:descC(C)}}finally{MCBUSY=0}mcRender()}
+const pct=(v,p)=>v[Math.min(v.length-1,Math.max(0,Math.round(p*(v.length-1))))],srt=a=>a.slice().sort((x,y)=>x-y);
+function mcRender(){const el=$('mcres');if(!el)return;if(!MC){el.innerHTML='<p><small>Ainda não foi corrida nenhuma simulação.</small></p>';return}
+const k=IND[U.mcI]?U.mcI:'op',ind=IND[k],v=srt(MC.o[k]),f=ind[2],mean=sum(v)/v.length;
+const lines=[{v:MC.base[k],n:'Cenário atual',c:'currentColor'}];if(k=='fm')lines.push({v:MC.tg,n:'Meta',c:'#b3372d'});else if(k=='pm')lines.push({v:1,n:'Meta',c:'#b3372d'});else lines.push({v:0,n:'Zero',c:'#b3372d'});
+el.innerHTML=`<p><small>${MC.N} simulações às ${MC.t.toLocaleTimeString('pt-PT')} para: ${escH(MC.desc)}. Se alterar o cenário, volte a correr.</small></p>
+<div class="cards">${kp('Probabilidade de atingir a meta',pc(MC.pOk),MC.pOk>=.5?'ok':'ko')+kp('Prob. de resultado incremental positivo',pc(MC.pRes),MC.pRes>=.5?'ok':'ko')+kp('Prob. de resultado operacional positivo',pc(MC.pOp),MC.pOp>=.5?'ok':'ko')+kp('Média — '+ind[0],f(mean))+kp('Pessimista (P5)',f(pct(v,.05)))+kp('Mediana (P50)',f(pct(v,.5)))+kp('Otimista (P95)',f(pct(v,.95)))}</div>
+<h3>Distribuição — ${ind[0]}</h3>${histo(v,lines,f)}<h3>Intervalos de resultado (90% das simulações)</h3>${mcTable()}`}
+function mcTable(){return tbl(['Indicador','P5 (pessimista)','Mediana','P95 (otimista)','Cenário atual'],['fm','pm','res','op'].map(k=>{const v=srt(MC.o[k]),f=IND[k][2];return[IND[k][0],f(pct(v,.05)),f(pct(v,.5)),f(pct(v,.95)),f(MC.base[k])]}))}
+function histo(v,lines,f){const W=720,H=230,pL=12,pB=34,pT=18,nb=30,mn=v[0],mx=v[v.length-1],w=(mx-mn)||Math.abs(mn)*.01||1,b=Array(nb).fill(0);v.forEach(x=>b[Math.min(nb-1,Math.floor((x-mn)/w*nb))]++);
+const bm=Math.max(...b),bw=(W-2*pL)/nb,X=x=>pL+(x-mn)/w*(W-2*pL);let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:880px;height:auto;display:block;margin:auto">`;
+b.forEach((c,i)=>{const h=c/bm*(H-pB-pT);s+=`<rect x="${pL+i*bw+1}" y="${H-pB-h}" width="${bw-2}" height="${h}" fill="#b4622d" opacity=".75"><title>${f(mn+i*w/nb)} a ${f(mn+(i+1)*w/nb)}: ${c} simulações (${pc(c/v.length)})</title></rect>`});
+for(let i=0;i<=4;i++){const x=mn+w*i/4;s+=`<text x="${X(x)}" y="${H-pB+16}" text-anchor="${i==0?'start':i==4?'end':'middle'}" font-size="10" fill="#888">${f(x)}</text>`}
+lines.forEach((l,j)=>{if(l.v<mn-w*.02||l.v>mx+w*.02)return;const x=X(l.v);s+=`<line x1="${x}" x2="${x}" y1="${pT}" y2="${H-pB}" stroke="${l.c}" stroke-width="2" stroke-dasharray="5 3"/><text x="${x+3}" y="${pT-4+j*11}" font-size="10" fill="${l.c}">${l.n}</text>`});return s+'</svg>'}
+
+// ---------- Otimizador com orçamento ----------
+let OPT=null,OPTBUSY=0;
+const OBJ={res:['Maximizar o resultado incremental',r=>r.I.res],inc:['Maximizar a faturação incremental',r=>r.I.inc],q:['Maximizar a qualidade da proposta',r=>quality(r).score],v24:['Maximizar o valor a 24 meses',r=>r.I.v24+r.L[2].res]};
+function descC(C){const p=[],nm=m=>MES[m-1];C.p1.forEach(v=>{if(v.n>0)p.push(`P1: ${v.n} comercia${v.n>1?'is':'l'} a partir de ${nm(v.h)}`)});
+C.p2.forEach(v=>{const k=S.canais[v.c];if(k&&v.B>0)p.push(`P2: ${k.n}, ${eur(v.B)} em ${nm(v.t)}`)});
+C.p3.forEach(v=>{if(v.d>0&&v.K.length)p.push(`P3: −${Math.round(v.d*100)}% em ${v.K.length==S.cats.length?'todas as categorias':v.K.slice().sort((a,b)=>a-b).map(i=>S.cats[i].n).join(', ')} (${nm(v.m)}${v.len>1?'–'+nm(Math.min(12,v.m+v.len-1)):''})`)});return p.length?p.join(' · '):'Não aplicar medidas'}
+function optHTML(){const ck=(p,l)=>`<label style="flex-direction:row;gap:6px;align-items:center"><input type="checkbox" style="width:auto;min-width:0" data-p="${p}" ${get(p)?'checked':''}> ${l}</label>`;
+return`<div class="card"><h3>Otimizador com orçamento</h3><p><small>Procura a combinação de medidas (P1, P2 e P3) que melhor cumpre o objetivo sem ultrapassar o orçamento. <b>Investimento</b> = custos incrementais no ano + desconto concedido. Só são aceites combinações sem avisos do modelo. Usa pesquisa aleatória seguida de melhoria local: encontra uma boa solução, não garante a ótima.</small></p>
+<div class="g">${fl('Orçamento máximo (€)','U.oB',{min:0})}<label>Objetivo<select data-p="U.oO">${Object.keys(OBJ).map(k=>`<option value="${k}" ${U.oO==k?'selected':''}>${OBJ[k][0]}</option>`).join('')}</select></label><label>Combinações a testar<select data-p="U.oN" data-n=1>${[1000,3000,6000].map(n=>`<option value=${n} ${U.oN==n?'selected':''}>${n}</option>`).join('')}</select></label></div>
+<div class="g" style="margin:6px 0">${ck('U.oP1','Pode usar P1 (força de vendas)')}${ck('U.oP2','Pode usar P2 (marketing)')}${ck('U.oP3','Pode usar P3 (promoções)')}</div>
+<button class="b" data-x="optrun">▶ Procurar a melhor combinação</button><div id="optres"></div></div>`}
+async function optRun(){if(OPTBUSY)return;OPTBUSY=1;try{const B=Math.max(0,+U.oB||0),N=+U.oN||3000,f=OBJ[U.oO]||OBJ.res,S2=clone(S),mi=Math.max(S.mi,S.hist.meta.length+1),ms=[];for(let m=mi;m<=12;m++)ms.push(m);
+const al={p1:!!U.oP1,p2:!!U.oP2,p3:!!U.oP3},rnd=n=>Math.floor(Math.random()*n),pick=a=>a[rnd(a.length)],ds=[.05,.1,.15,.2,.25,.3,.4,.5].filter(d=>d<=S.P.DMAX+1e-9),nc=S.canais.length,nk=S.cats.length;
+const ev=c=>{const r=calc(S2,c),inv=r.I.cost+r.I.ds;return{c,r,inv,sc:(inv<=B+1e-6&&!r.warn.length)?f[1](r):-Infinity}};
+const rand=()=>{const c=newC(mi);if(al.p1&&Math.random()<.5)c.p1[0]={n:1+rnd(6),h:pick(ms)};
+if(al.p2)c.p2.forEach((_,i)=>{if(Math.random()<.45){const j=rnd(nc);c.p2[i]={c:j,B:Math.round(S.canais[j].orc*pick([.25,.5,.75,1,1.5,2])),t:pick(ms)}}});
+if(al.p3&&ds.length&&Math.random()<.45){const K=Math.random()<.3?S.cats.map((_,i)=>i):S.cats.map((_,i)=>i).filter(()=>Math.random()<.4);if(K.length)c.p3[0]={d:pick(ds),K,m:pick(ms),len:1+rnd(3)}}return c};
+const mut=c0=>{const c=clone(c0),w=[];if(al.p1)w.push(1);if(al.p2)w.push(2);if(al.p3&&ds.length)w.push(3);if(!w.length)return c;const k=pick(w),r=Math.random();
+if(k==1){const v=c.p1[0];if(r<.6)v.n=Math.max(0,Math.min(6,v.n+(Math.random()<.5?-1:1)));else v.h=pick(ms)}
+if(k==2){const v=c.p2[rnd(3)];if(!(v.B>0)){const j=rnd(nc);Object.assign(v,{c:j,B:Math.round(S.canais[j].orc*.5),t:pick(ms)})}else if(r<.5)v.B=Math.max(0,Math.round(v.B*(.6+Math.random()*.8)));else if(r<.7)v.t=pick(ms);else if(r<.85)v.c=rnd(nc);else v.B=0}
+if(k==3){const v=c.p3[rnd(3)];if(!(v.d>0)||!v.K.length)Object.assign(v,{d:pick(ds),K:[rnd(nk)],m:pick(ms),len:1});else if(r<.3){const i=rnd(nk),p=v.K.indexOf(i);if(p<0)v.K.push(i);else v.K.splice(p,1)}else if(r<.5)v.d=pick(ds);else if(r<.7)v.m=pick(ms);else if(r<.85)v.len=Math.max(1,Math.min(6,v.len+(Math.random()<.5?-1:1)));else v.d=0}return c};
+const pool=[ev(newC(mi)),ev(clone(C))],prog=(i)=>{const e=$('optres');if(e)e.innerHTML=`<div class="w">A testar combinações… ${i} de ${N}</div>`};
+// "Estratégia" = que alavancas, canais, n.º de comerciais e desconto usa (ignora montantes e meses), para sugerir alternativas diferentes
+const sig=c=>[c.p1.filter(v=>v.n>0).map(v=>'P1x'+v.n).join(),[...new Set(c.p2.filter(v=>v.B>0).map(v=>v.c))].sort().join(),c.p3.filter(v=>v.d>0&&v.K.length).map(v=>v.d+'/'+v.K.length).sort().join()].join('|');
+const top=(byS)=>{const m=new Map();pool.filter(x=>x.sc>-Infinity).sort((a,b)=>b.sc-a.sc).forEach(x=>{const k=byS?sig(x.c):descC(x.c);if(!m.has(k))m.set(k,x)});return[...m.values()]};
+const n1=Math.round(N*.4);for(let i=0;i<n1;i++){pool.push(ev(rand()));if(i%300==299){prog(i+1);await tick()}}
+const seeds=top().slice(0,5),per=Math.round((N-n1)/Math.max(1,seeds.length));let cnt=n1;
+for(const s0 of seeds){let cur=s0;for(let j=0;j<per;j++){const nx=ev(mut(cur.c));if(nx.sc>=cur.sc){cur=nx;pool.push(nx)}if(++cnt%300==0){prog(cnt);await tick()}}}
+OPT={B,obj:U.oO in OBJ?U.oO:'res',N,sols:top(1).slice(0,5).map(x=>({C:x.c,inv:x.inv,r:x.r,sc:x.sc,d:descC(x.c)})),t:new Date()}}finally{OPTBUSY=0}optRender()}
+function optRows(btn){return OPT.sols.map((s,i)=>{const I=s.r.I,q=quality(s.r);const dd=escH(s.d).split(' · ').join('<br>'),row=[i+1,btn?`<div style="white-space:normal;text-align:left;min-width:260px">${dd}<div style="margin-top:4px"><button class="b" data-x="optap${i}">Aplicar</button><button class="b s" data-x="optsv${i}">Guardar como cenário</button></div></div>`:dd,eur(s.inv),eur(I.inc),pc(I.pm),eur(I.res),num(I.roi),eur(I.v24),Math.round(q.score)+' — '+q.label];
+return row})}
+const OPTH=['#','Medidas','Investimento','Fat. incremental','% da meta','Resultado incremental','ROI','Valor a 24 meses','Qualidade'];
+function optRender(){const el=$('optres');if(!el)return;if(!OPT){el.innerHTML='<p><small>Defina o orçamento e o objetivo e carregue em «Procurar».</small></p>';return}
+const best=OPT.sols[0];el.innerHTML=`<p><small>${OPT.N} combinações testadas às ${OPT.t.toLocaleTimeString('pt-PT')} — orçamento ${eur(OPT.B)}, objetivo: ${OBJ[OPT.obj][0].toLowerCase()}.</small></p>`+
+(best&&best.d=='Não aplicar medidas'?'<div class="w">Com este orçamento e objetivo, nenhuma combinação testada é melhor do que não aplicar medidas.</div>':'')+
+tbl(OPTH,optRows(true)).replace('<table>','<table class="tl2">')+'<small>As 5 melhores combinações distintas encontradas. «Aplicar» substitui as medidas atuais (pode anular com Ctrl+Z).</small>'}
+
+// ---------- Exportar para Excel ----------
+async function exportXLSX(){try{await ld()}catch(e){alert(e);return}
+const r=calc(S,C),I=r.I,q=quality(r),wb=XLSX.utils.book_new(),EF='#,##0 "€"',PF='0.0%',NF='0.00';
+const add=(name,rows,cols)=>{const F=[],aoa=rows.map((row,i)=>row.map((c,j)=>{if(c&&typeof c=='object'&&'v' in c){F.push([i,j,c.z]);return c.v}return c}));const ws=XLSX.utils.aoa_to_sheet(aoa);
+F.forEach(([i,j,z])=>{const a=XLSX.utils.encode_cell({r:i,c:j});if(ws[a])ws[a].z=z});if(cols)ws['!cols']=cols.map(w=>({wch:w}));XLSX.utils.book_append_sheet(wb,ws,name.slice(0,31))};
+const e=v=>({v:Math.round((+v||0)*100)/100,z:EF}),p=v=>({v:+v||0,z:PF}),n=v=>({v:+v||0,z:NF}),cf=k=>k=='pm'?p:k=='roi'?n:e;
+add('Resumo',[[S.nome],[S.setor+' — '+S.sede],['Exportado em',new Date().toLocaleString('pt-PT')],['Utilizador',who()],['Meta de crescimento',p(S.meta)],['Medidas',descC(C)],[],['Indicador','Valor'],
+['Faturação '+S.am,e(I.fm)],['Meta '+S.am,e(r.tg)],['Cumprimento da meta',p(I.pm)],['Variação vs '+S.ab,p(I.var)],['Distância à meta',e(I.dist)],['Faturação incremental',e(I.inc)],['Custos incrementais',e(I.cost)],['Desconto concedido',e(I.ds)],['Margem bruta incremental',e(I.mb)],['Resultado incremental',e(I.res)],['ROI',n(I.roi)],['Custo por € adicional',n(I.cpe)],['Valor a 24 meses (P1+P2)',e(I.v24)],['Efeito no ano seguinte',e(-I.nx)],['Resultado operacional sem medidas',e(r.opB)],['Resultado operacional com medidas',e(r.op)],['Qualidade da proposta (0-100)',n(q.score)],['Classificação',q.label]],[38,60]);
+const sim=r.F.map((v,i)=>v+r.L[0].f[i]+r.L[1].f[i]+r.L[2].f[i]),mt=S.hist.base.map(v=>v*(1+S.meta));
+add('Faturação mensal',[['Mês','Real '+S.ab,'Real '+S.am,'Cenário base','P1','P2','P3','Simulado','Meta mensal','Simulado ÷ meta'],...MES.map((m,i)=>[m,e(S.hist.base[i]),i<r.nr?e(S.hist.meta[i]):'',e(r.F[i]),e(r.L[0].f[i]),e(r.L[1].f[i]),e(r.L[2].f[i]),e(sim[i]),e(mt[i]),p(sim[i]/mt[i])]),
+['Total',e(sum(S.hist.base)),e(sum(S.hist.meta)),e(r.Fs),e(r.L[0].fat),e(r.L[1].fat),e(r.L[2].fat),e(I.fm),e(r.tg),p(I.pm)]],[8,14,14,14,12,12,12,14,14,14]);
+add('Medidas',[['Alavanca','Faturação incremental','Custos incrementais','Margem incremental','Resultado incremental','Valor a 24 meses / desconto'],...['P1 Força de vendas','P2 Marketing','P3 Promoções'].map((nm,i)=>{const l=r.L[i];return[nm,e(l.fat),e(l.c),e(l.mb),e(l.res),e(i<2?l.v24:l.ds)]}),[],['Descrição das medidas'],...descC(C).split(' · ').map(x=>[x])],[30,20,20,20,20,24]);
+add('Alertas',[['Nível','Alerta'],...alertas(r,true).map(a=>[NIVEL[a.nivel],a.txt])],[10,100]);
+const z=sensRun(),c1=cf(U.si);add('Sensibilidade',[['Indicador',z.ind[0]],['Variação de cada parâmetro',p(z.f)],['Valor no cenário atual',c1(z.v0)],[],['Parâmetro','Valor com −'+pc(z.f,0),'Valor com +'+pc(z.f,0),'Efeito −','Efeito +','Amplitude'],...z.rows.map(x=>[x.n,c1(x.l),c1(x.h),c1(x.dl),c1(x.dh),c1(x.amp)]),...z.zero.map(x=>[x.n,'sem efeito'])],[34,18,18,16,16,16]);
+if(MC){add('Monte Carlo',[['Simulações',MC.N],['Medidas',MC.desc],['Probabilidade de atingir a meta',p(MC.pOk)],['Prob. de resultado incremental positivo',p(MC.pRes)],['Prob. de resultado operacional positivo',p(MC.pOp)],[],['Parâmetro incerto','Incerteza (±)'],...UNC_K.map(k=>[SNM[k],p((S.UNC||DEF.UNC)[k])]),[],['Indicador','P5','Mediana','P95','Cenário atual'],...['fm','pm','res','op'].map(k=>{const v=srt(MC.o[k]),c2=cf(k);return[IND[k][0],c2(pct(v,.05)),c2(pct(v,.5)),c2(pct(v,.95)),c2(MC.base[k])]})],[38,16,16,16,16]);
+add('Monte Carlo - amostras',[['Simulação','Faturação','% da meta','Resultado incremental','Resultado operacional','ROI'],...MC.o.fm.map((_,i)=>[i+1,e(MC.o.fm[i]),p(MC.o.pm[i]),e(MC.o.res[i]),e(MC.o.op[i]),n(MC.o.roi[i])])],[10,16,12,20,20,10])}
+if(OPT)add('Otimizador',[['Orçamento',e(OPT.B)],['Objetivo',OBJ[OPT.obj][0]],[],OPTH,...OPT.sols.map((s,i)=>[i+1,s.d,e(s.inv),e(s.r.I.inc),p(s.r.I.pm),e(s.r.I.res),n(s.r.I.roi),e(s.r.I.v24),n(quality(s.r).score)])],[4,70,14,16,10,18,8,16,10]);
+if(SAVED.length){const rs=[r,...SAVED.map(s=>calc(s.S,s.C))],L=[['Faturação',x=>e(x.I.fm)],['Cumprimento da meta',x=>p(x.I.pm)],['Faturação incremental',x=>e(x.I.inc)],['Custos incrementais',x=>e(x.I.cost)],['Desconto concedido',x=>e(x.I.ds)],['Resultado incremental',x=>e(x.I.res)],['ROI',x=>n(x.I.roi)],['Valor a 24 meses',x=>e(x.I.v24)],['Resultado operacional com medidas',x=>e(x.op)],['Qualidade',x=>n(quality(x).score)]];
+add('Cenários',[['Indicador','Atual',...SAVED.map(s=>s.name)],...L.map(([l,f])=>[l,...rs.map(f)])],[34,...rs.map(()=>18)])}
+add('Parâmetros',[['Parâmetro','Valor atual','Valor do Excel','Alterado?'],...Object.keys(S.P).map(k=>[k,S.P[k],DEF.P[k],String(S.P[k])!=String(DEF.P[k])?'sim':''])],[12,16,16,10]);
+if(UNDO.length)add('Histórico',[['Hora','Utilizador','Separador','Alteração'],...UNDO.map(h=>[new Date(h.t).toLocaleString('pt-PT'),h.u,h.tab,h.desc])],[20,26,22,80]);
+XLSX.writeFile(wb,'simulador_'+S.nome.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w]+/g,'_').slice(0,30)+'_'+new Date().toISOString().slice(0,10)+'.xlsx')}
+
+// ---------- Relatório PDF: secções extra ----------
+function reportExtra(r){let h='<h2>Ponte da faturação</h2>'+cascata(fatItems(r),1)+'<h2>Ponte do resultado operacional</h2>'+cascata(resItems(r))+'<h2>Calendário das medidas</h2>'+calTable(r);
+const z=sensRun();h+=`<h2>Análise de sensibilidade — ${z.ind[0]} (parâmetros ±${pc(z.f,0)})</h2>`+tornado(z)+(z.zero.length?'<p>Sem efeito neste cenário: '+z.zero.map(x=>x.n).join(', ')+'.</p>':'');
+if(MC)h+=`<h2>Simulação de Monte Carlo (${MC.N} simulações)</h2><p>Probabilidade de atingir a meta: <b>${pc(MC.pOk)}</b> · de resultado incremental positivo: <b>${pc(MC.pRes)}</b> · de resultado operacional positivo: <b>${pc(MC.pOp)}</b></p>`+mcTable()+histo(srt(MC.o[IND[U.mcI]?U.mcI:'op']),[{v:MC.base[IND[U.mcI]?U.mcI:'op'],n:'Cenário atual',c:'#000'}],IND[IND[U.mcI]?U.mcI:'op'][2]);
+if(OPT&&OPT.sols.length)h+=`<h2>Otimizador — orçamento ${eur(OPT.B)}, ${OBJ[OPT.obj][0].toLowerCase()}</h2>`+tbl(OPTH,optRows(false));return h}
+
+// ---------- Ligação à aplicação ----------
+function extRefresh(){const q=(id,h)=>{const e=$(id);if(e)e.innerHTML=h};
+document.querySelectorAll('[data-x=undo]').forEach(b=>b.disabled=!UNDO.length);document.querySelectorAll('[data-x=redo]').forEach(b=>b.disabled=!REDO.length);
+if($('alrt')){q('semaf',semaf(R));q('alrt',alertas(R,false).map(a=>`<div class="al ${a.nivel}"><i>${NIVEL[a.nivel]}</i><span>${escH(a.txt)}</span></div>`).join(''))}
+if($('wf1')){q('wf1',cascata(fatItems(R),1));q('wf2',cascata(resItems(R)))}
+if($('qwt')){const w=qw();q('qwt',`Pesos efetivos: cumprimento da meta <b>${pc(w.meta,0)}</b> · ROI <b>${pc(w.roi,0)}</b> · resultado operacional <b>${pc(w.op,0)}</b>. Qualidade da proposta atual: <b>${quality(R).label} (${Math.round(quality(R).score)}/100)</b>.`)}
+if($('calg'))q('calg',calTable(R));
+if($('tor')){const z=sensRun();q('tor',tornado(z));q('tort',tbl(['Parâmetro','Valor com −'+pc(z.f,0),'Valor com +'+pc(z.f,0),'Amplitude'],z.rows.map(x=>[x.n,z.ind[2](x.l),z.ind[2](x.h),z.ind[2](x.amp)]))+(z.zero.length?'<p><small>Sem efeito neste cenário (a alavanca correspondente não está a ser usada): '+z.zero.map(x=>x.n).join(', ')+'.</small></p>':''))}
+if($('mcres')&&!MCBUSY)mcRender();if($('optres')&&!OPTBUSY)optRender();if($('histl'))q('histl',histTable())}
+function extClick(x){if(x=='undo'){undo();return 1}if(x=='redo'){redo();return 1}if(/^hgo\d+$/.test(x)){goTo(+x.slice(3));return 1}
+if(x=='xlsx'){exportXLSX();return 1}if(x=='mcrun'){mcRun();return 1}if(x=='optrun'){optRun();return 1}
+if(/^optap\d$/.test(x)&&OPT){const s=OPT.sols[+x.slice(5)];if(s){snap('Otimizador: aplicar «'+s.d+'»');C=clone(s.C);tab='res';renderAll()}return 1}
+if(/^optsv\d$/.test(x)&&OPT){const i=+x.slice(5),s=OPT.sols[i];if(SAVED.length>=4){alert('Máximo de 4 cenários.');return 1}if(s){SAVED.push({name:'Otimizador '+(i+1),S:clone(S),C:clone(s.C)});tab='cmp';renderAll()}return 1}return 0}
+//#FIM_APOIO_DECISAO
+S.mi=Math.max(S.mi,S.hist.meta.length+1);C=newC(S.mi);
+(async()=>{if(sb){const {data}=await sb.auth.getSession();if(data&&data.session){AUTH.cur={u:data.session.user.email};VIEW='app';await cloudLoad(true)}}renderTop()})();
+</script></body></html>
